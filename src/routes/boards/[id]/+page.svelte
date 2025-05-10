@@ -12,10 +12,8 @@
 	let isLoading = true;
 	let errorMessage: string | null = null;
 	
-	// Get board ID from URL
 	$: boardId = $page.params.id;
 	
-	// Redirect if not authenticated
 	$: if (!$isAuthenticated && !isLoading) {
 		goto('/login');
 	}

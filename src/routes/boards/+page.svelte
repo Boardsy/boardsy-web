@@ -10,7 +10,6 @@
 	let isLoading = true;
 	let showCreateModal = false;
 	
-	// Redirect if not authenticated
 	$: if (!$isAuthenticated && !isLoading) {
 		goto('/login');
 	}

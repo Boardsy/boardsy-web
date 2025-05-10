@@ -1,12 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '$lib/types/database';
 
-// Use environment variables with PUBLIC_ prefix
-// Provide fallbacks for development to prevent crashes
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || 'https://placeholder-url.supabase.co';
-const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
-// Log warning if environment variables are missing
 if (!import.meta.env.PUBLIC_SUPABASE_URL || !import.meta.env.PUBLIC_SUPABASE_ANON_KEY) {
   console.warn(
     'Missing Supabase environment variables. Make sure PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_ANON_KEY are set in your .env file.',
@@ -20,7 +17,6 @@ if (!import.meta.env.PUBLIC_SUPABASE_URL || !import.meta.env.PUBLIC_SUPABASE_ANO
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
-// Auth helper functions
 export const signUp = async (email: string, password: string) => {
   return await supabase.auth.signUp({
     email,

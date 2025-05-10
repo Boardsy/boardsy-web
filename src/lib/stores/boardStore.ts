@@ -2,13 +2,11 @@ import { writable, derived, get } from 'svelte/store';
 import type { Board, Column, Card } from '$lib/types/models';
 import { supabase } from '$lib/services/supabase';
 
-// Stores
 export const boards = writable<Board[]>([]);
 export const currentBoard = writable<Board | null>(null);
 export const isLoading = writable(false);
 export const error = writable<string | null>(null);
 
-// Helper function to convert database data to our model format
 const mapBoard = (boardData: any): Board => {
   return {
     id: boardData.id,
@@ -50,13 +48,11 @@ const mapCard = (cardData: any): Card => {
   };
 };
 
-// API functions
 export const fetchUserBoards = async (userId: string) => {
   isLoading.set(true);
   error.set(null);
   
   try {
-    // Fetch boards where user is a member
     const { data: boardMembers, error: memberError } = await supabase
       .from('board_members')
       .select('board_id')
@@ -72,7 +68,6 @@ export const fetchUserBoards = async (userId: string) => {
     
     const boardIds = boardMembers.map(bm => bm.board_id);
     
-    // Fetch board details
     const { data: boardsData, error: boardsError } = await supabase
       .from('boards')
       .select('*')
@@ -96,7 +91,6 @@ export const fetchBoardDetails = async (boardId: string) => {
   error.set(null);
   
   try {
-    // Fetch board
     const { data: boardData, error: boardError } = await supabase
       .from('boards')
       .select('*')
@@ -108,7 +102,6 @@ export const fetchBoardDetails = async (boardId: string) => {
     
     const board = mapBoard(boardData);
     
-    // Fetch columns
     const { data: columnsData, error: columnsError } = await supabase
       .from('columns')
       .select('*')
@@ -119,7 +112,6 @@ export const fetchBoardDetails = async (boardId: string) => {
     
     const columns = columnsData ? columnsData.map(mapColumn) : [];
     
-    // Fetch cards for each column
     for (const column of columns) {
       const { data: cardsData, error: cardsError } = await supabase
         .from('cards')
@@ -131,7 +123,6 @@ export const fetchBoardDetails = async (boardId: string) => {
       
       column.cards = cardsData ? cardsData.map(mapCard) : [];
       
-      // Fetch labels for each card
       for (const card of column.cards) {
         const { data: cardLabels, error: labelsError } = await supabase
           .from('card_labels')
@@ -142,7 +133,6 @@ export const fetchBoardDetails = async (boardId: string) => {
         
         if (cardLabels) {
           card.labels = cardLabels.map(cl => {
-            // Type assertion to help TypeScript understand the structure
             const labelData = cl.labels as unknown as { 
               id: string;
               name: string;
@@ -176,44 +166,65 @@ export const createBoard = async (title: string, description?: string, backgroun
   error.set(null);
   
   try {
-    const { data: userData } = await supabase.auth.getUser();
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    
+    if (userError) {
+      throw new Error('User not authenticated: ' + userError.message);
+    }
+    
     const userId = userData.user?.id;
     
     if (!userId) {
       throw new Error('User not authenticated');
     }
     
-    // Create board
+    console.log('Creating board with user ID:', userId);
+    
+    console.log('Attempting to create board with data:', {
+      title,
+      description: description || null,
+      background_color: backgroundColor || null,
+      owner_id: userId
+    });
+    
     const { data: boardData, error: boardError } = await supabase
       .from('boards')
       .insert([
         {
           title,
-          description,
-          background_color: backgroundColor,
+          description: description || null,
+          background_color: backgroundColor || null,
           owner_id: userId
         }
       ])
-      .select()
-      .single();
+      .select();
     
-    if (boardError) throw boardError;
-    if (!boardData) throw new Error('Failed to create board');
+    if (boardError) {
+      console.error('Board creation error:', boardError);
+      throw boardError;
+    }
     
-    // Add creator as board member (owner)
+    if (!boardData || boardData.length === 0) {
+      throw new Error('Failed to create board: No data returned');
+    }
+    
+    const newBoardId = boardData[0].id;
+    console.log('Board created successfully:', boardData[0]);
+    
     const { error: memberError } = await supabase
       .from('board_members')
       .insert([
         {
-          board_id: boardData.id,
+          board_id: newBoardId,
           user_id: userId,
           role: 'owner'
         }
       ]);
     
-    if (memberError) throw memberError;
+    if (memberError) {
+      console.error('Error adding board member:', memberError);
+    }
     
-    // Create default columns
     const defaultColumns = [
       { title: 'To Do', position: 0 },
       { title: 'In Progress', position: 1 },
@@ -221,30 +232,32 @@ export const createBoard = async (title: string, description?: string, backgroun
     ];
     
     for (const column of defaultColumns) {
-      await supabase
+      const { error: columnError } = await supabase
         .from('columns')
         .insert([
           {
             title: column.title,
-            board_id: boardData.id,
+            board_id: newBoardId,
             position: column.position
           }
         ]);
+        
+      if (columnError) {
+        console.error('Error creating column:', columnError);
+      }
     }
     
-    // Refresh boards list
-    fetchUserBoards(userId);
+    await fetchUserBoards(userId);
     
-    return boardData.id;
-  } catch (err) {
+    return newBoardId;
+  } catch (err: unknown) {
     console.error('Error creating board:', err);
-    error.set('Failed to create board');
+    error.set('Failed to create board: ' + ((err instanceof Error) ? err.message : 'Unknown error'));
     return null;
   } finally {
     isLoading.set(false);
   }
 };
-
 export const createCard = async (columnId: string, title: string, description?: string) => {
   isLoading.set(true);
   error.set(null);
@@ -257,7 +270,6 @@ export const createCard = async (columnId: string, title: string, description?: 
       throw new Error('User not authenticated');
     }
     
-    // Get current maximum position in column
     const { data: maxPositionData } = await supabase
       .from('cards')
       .select('position')
@@ -269,7 +281,6 @@ export const createCard = async (columnId: string, title: string, description?: 
       ? maxPositionData[0].position + 1 
       : 0;
     
-    // Insert new card
     const { data: cardData, error: cardError } = await supabase
       .from('cards')
       .insert([
@@ -286,7 +297,6 @@ export const createCard = async (columnId: string, title: string, description?: 
     
     if (cardError) throw cardError;
     
-    // Refresh current board
     const boardValue = get(currentBoard);
     if (boardValue) {
       fetchBoardDetails(boardValue.id);
@@ -307,7 +317,6 @@ export const moveCard = async (cardId: string, newColumnId: string, newPosition:
   error.set(null);
   
   try {
-    // Update card position
     const { error: updateError } = await supabase
       .from('cards')
       .update({
@@ -318,7 +327,6 @@ export const moveCard = async (cardId: string, newColumnId: string, newPosition:
     
     if (updateError) throw updateError;
     
-    // Refresh current board
     const boardValue = get(currentBoard);
     if (boardValue) {
       fetchBoardDetails(boardValue.id);
@@ -331,13 +339,11 @@ export const moveCard = async (cardId: string, newColumnId: string, newPosition:
   }
 };
 
-// Reorder cards in a column
 export const reorderCards = async (columnId: string, cardIds: string[]) => {
   isLoading.set(true);
   error.set(null);
   
   try {
-    // Update positions in batches
     for (let i = 0; i < cardIds.length; i++) {
       const { error: updateError } = await supabase
         .from('cards')
@@ -347,7 +353,6 @@ export const reorderCards = async (columnId: string, cardIds: string[]) => {
       if (updateError) throw updateError;
     }
     
-    // Refresh current board
     const boardValue = get(currentBoard);
     if (boardValue) {
       fetchBoardDetails(boardValue.id);

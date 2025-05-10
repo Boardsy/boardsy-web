@@ -35,7 +35,6 @@
 		errorMessage = '';
 		
 		try {
-			// Get the max position
 			const { data: existingColumns, error: fetchError } = await supabase
 				.from('columns')
 				.select('position')
@@ -49,7 +48,6 @@
 				? existingColumns[0].position + 1
 				: 0;
 			
-			// Insert the new column
 			const { error: insertError } = await supabase
 				.from('columns')
 				.insert([
@@ -62,10 +60,8 @@
 			
 			if (insertError) throw insertError;
 			
-			// Refresh board data
 			await fetchBoardDetails(boardId);
 			
-			// Reset the form
 			newColumnTitle = '';
 			isAdding = false;
 		} catch (error) {

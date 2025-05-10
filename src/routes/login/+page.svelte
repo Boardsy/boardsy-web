@@ -10,7 +10,6 @@
 	let isSubmitting = false;
 	let errorMessage = '';
 	
-	// Redirect if already authenticated
 	onMount(() => {
 		if ($isAuthenticated) {
 			goto('/boards');
@@ -34,8 +33,6 @@
 				return;
 			}
 			
-			// Successful login will trigger auth state change
-			// which will update the store and redirect
 			goto('/boards');
 		} catch (error) {
 			console.error('Login error:', error);

@@ -2,17 +2,14 @@ import { writable } from 'svelte/store';
 import type { User } from '$lib/types/models';
 import { supabase, getCurrentUser } from '$lib/services/supabase';
 
-// Define the store
 export const user = writable<User | null>(null);
 export const isLoading = writable(true);
 export const isAuthenticated = writable(false);
 
-// Initialize the user store
 export const initUserStore = async () => {
   isLoading.set(true);
   
   try {
-    // Check for existing session
     const { data: { user: currentUser }, error } = await getCurrentUser();
     
     if (error) {
@@ -39,7 +36,6 @@ export const initUserStore = async () => {
     isLoading.set(false);
   }
   
-  // Set up auth state change listener
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) {
       const currentUser = session.user;

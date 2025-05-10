@@ -13,7 +13,6 @@
 	let errorMessage = '';
 	let successMessage = '';
 	
-	// Redirect if already authenticated
 	onMount(() => {
 		if ($isAuthenticated) {
 			goto('/boards');
@@ -21,7 +20,6 @@
 	});
 	
 	async function handleRegister() {
-		// Form validation
 		if (!email || !password || !confirmPassword) {
 			errorMessage = 'Please fill out all required fields';
 			return;
@@ -49,15 +47,12 @@
 				return;
 			}
 			
-			// Show success message
 			successMessage = 'Registration successful! Please check your email to confirm your account.';
-			// Clear form
 			name = '';
 			email = '';
 			password = '';
 			confirmPassword = '';
 			
-			// Optional: Auto-redirect to login page after a delay
 			setTimeout(() => {
 				goto('/login');
 			}, 3000);

@@ -10,12 +10,10 @@
 		showCardDetails = !showCardDetails;
 	}
 	
-	// Format the due date if it exists
 	$: formattedDueDate = card.dueDate 
 		? format(new Date(card.dueDate), 'MMM d, yyyy') 
 		: null;
 		
-	// Check if due date is overdue
 	$: isOverdue = card.dueDate 
 		? new Date(card.dueDate) < new Date() 
 		: false;

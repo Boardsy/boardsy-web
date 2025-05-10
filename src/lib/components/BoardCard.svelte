@@ -12,7 +12,6 @@
 	function getInitialColors() {
 		if (board.backgroundColor) return board.backgroundColor;
 		
-		// Default board colors if no custom color is set
 		const colors = [
 			'#3B82F6', // Blue
 			'#10B981', // Green
@@ -22,7 +21,6 @@
 			'#EC4899'  // Pink
 		];
 		
-		// Use the board id to consistently pick the same color
 		const index = board.id.charCodeAt(0) % colors.length;
 		return colors[index];
 	}

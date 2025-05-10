@@ -60,7 +60,6 @@
 		}
 	}
 	
-	// Handle DnD
 	function handleDndConsider(e: CustomEvent<{ items: any[] }>) {
 		const newItems = e.detail.items;
 		column = { ...column, cards: newItems };
@@ -70,7 +69,6 @@
 		const newItems = e.detail.items;
 		column = { ...column, cards: newItems };
 		
-		// Dispatch event for reordering cards
 		const cardIds = newItems.map(item => item.id);
 		dispatch('cardReorder', { columnId: column.id, cardIds });
 	}

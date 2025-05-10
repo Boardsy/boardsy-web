@@ -3,7 +3,6 @@
 	import { isAuthenticated } from '$lib/stores/userStore';
 	import { onMount } from 'svelte';
 	
-	// Redirect to boards page if already authenticated
 	onMount(() => {
 		if ($isAuthenticated) {
 			goto('/boards');

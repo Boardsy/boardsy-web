@@ -2,16 +2,16 @@
 	import { createEventDispatcher } from 'svelte';
 	import { supabase } from '$lib/services/supabase';
 	import { fetchBoardDetails } from '$lib/stores/boardStore';
-	
+
 	export let boardId: string;
-	
+
 	const dispatch = createEventDispatcher();
-	
+
 	let isAdding = false;
 	let newColumnTitle = '';
 	let isSubmitting = false;
 	let errorMessage = '';
-	
+
 	function toggleAdding() {
 		isAdding = !isAdding;
 		if (isAdding) {
@@ -24,16 +24,16 @@
 			errorMessage = '';
 		}
 	}
-	
+
 	async function handleAddColumn() {
 		if (!newColumnTitle.trim()) {
 			errorMessage = 'Title is required';
 			return;
 		}
-		
+
 		isSubmitting = true;
 		errorMessage = '';
-		
+
 		try {
 			const { data: existingColumns, error: fetchError } = await supabase
 				.from('columns')
@@ -41,27 +41,24 @@
 				.eq('board_id', boardId)
 				.order('position', { ascending: false })
 				.limit(1);
-			
+
 			if (fetchError) throw fetchError;
-			
-			const newPosition = existingColumns && existingColumns.length > 0
-				? existingColumns[0].position + 1
-				: 0;
-			
-			const { error: insertError } = await supabase
-				.from('columns')
-				.insert([
-					{
-						title: newColumnTitle,
-						board_id: boardId,
-						position: newPosition
-					}
-				]);
-			
+
+			const newPosition =
+				existingColumns && existingColumns.length > 0 ? existingColumns[0].position + 1 : 0;
+
+			const { error: insertError } = await supabase.from('columns').insert([
+				{
+					title: newColumnTitle,
+					board_id: boardId,
+					position: newPosition
+				}
+			]);
+
 			if (insertError) throw insertError;
-			
+
 			await fetchBoardDetails(boardId);
-			
+
 			newColumnTitle = '';
 			isAdding = false;
 		} catch (error) {
@@ -71,7 +68,7 @@
 			isSubmitting = false;
 		}
 	}
-	
+
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -86,15 +83,13 @@
 	<div class="add-column-form">
 		<div class="add-column-header">
 			<h3>Add Column</h3>
-			<button class="close-btn" on:click={toggleAdding} aria-label="Close">
-				&times;
-			</button>
+			<button class="close-btn" on:click={toggleAdding} aria-label="Close"> &times; </button>
 		</div>
-		
+
 		{#if errorMessage}
 			<div class="error-message">{errorMessage}</div>
 		{/if}
-		
+
 		<input
 			id="new-column-input"
 			type="text"
@@ -104,11 +99,11 @@
 			on:keydown={handleKeyPress}
 			disabled={isSubmitting}
 		/>
-		
+
 		<div class="form-actions">
-			<button 
-				type="button" 
-				class="btn btn-primary btn-sm" 
+			<button
+				type="button"
+				class="btn btn-primary btn-sm"
 				on:click={handleAddColumn}
 				disabled={isSubmitting}
 			>
@@ -136,20 +131,22 @@
 		justify-content: center;
 		cursor: pointer;
 		color: var(--color-text-secondary);
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 		margin-right: var(--spacing-md);
 	}
-	
+
 	.add-column-button:hover {
 		background-color: rgba(59, 130, 246, 0.1);
 		color: var(--color-primary);
 	}
-	
+
 	.add-icon {
 		font-size: 1.2rem;
 		margin-right: var(--spacing-xs);
 	}
-	
+
 	.add-column-form {
 		min-width: 280px;
 		max-width: 280px;
@@ -159,19 +156,19 @@
 		box-shadow: var(--shadow-md);
 		margin-right: var(--spacing-md);
 	}
-	
+
 	.add-column-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: var(--spacing-md);
 	}
-	
+
 	.add-column-header h3 {
 		font-size: var(--font-size-md);
 		font-weight: var(--font-weight-medium);
 	}
-	
+
 	.close-btn {
 		font-size: 1.5rem;
 		line-height: 1;
@@ -180,13 +177,13 @@
 		cursor: pointer;
 		color: var(--color-text-secondary);
 	}
-	
+
 	.error-message {
 		color: var(--color-error);
 		font-size: var(--font-size-xs);
 		margin-bottom: var(--spacing-xs);
 	}
-	
+
 	.form-actions {
 		margin-top: var(--spacing-md);
 		display: flex;

@@ -1,83 +1,83 @@
 :root {
-  /* Base colors */
-  --color-primary: #3B82F6;
-  --color-primary-light: #60A5FA;
-  --color-primary-dark: #2563EB;
-  
-  --color-secondary: #10B981;
-  --color-secondary-light: #34D399;
-  --color-secondary-dark: #059669;
-  
-  --color-accent: #8B5CF6;
-  --color-accent-light: #A78BFA;
-  --color-accent-dark: #7C3AED;
-  
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  
-  /* Light mode */
-  --color-bg-light: #F9FAFB;
-  --color-surface-light: #FFFFFF;
-  --color-border-light: #E5E7EB;
-  --color-text-primary-light: #1F2937;
-  --color-text-secondary-light: #6B7280;
-  --color-text-tertiary-light: #9CA3AF;
-  
-  /* Dark mode */
-  --color-bg-dark: #1F2937;
-  --color-surface-dark: #111827;
-  --color-border-dark: #374151;
-  --color-text-primary-dark: #F9FAFB;
-  --color-text-secondary-dark: #D1D5DB;
-  --color-text-tertiary-dark: #9CA3AF;
-  
-  /* Functional colors */
-  --color-bg: var(--color-bg-light);
-  --color-surface: var(--color-surface-light);
-  --color-border: var(--color-border-light);
-  --color-text-primary: var(--color-text-primary-light);
-  --color-text-secondary: var(--color-text-secondary-light);
-  --color-text-tertiary: var(--color-text-tertiary-light);
-  
-  /* Spacings */
-  --spacing-xs: 0.25rem;  /* 4px */
-  --spacing-sm: 0.5rem;   /* 8px */
-  --spacing-md: 1rem;     /* 16px */
-  --spacing-lg: 1.5rem;   /* 24px */
-  --spacing-xl: 2rem;     /* 32px */
-  --spacing-2xl: 3rem;    /* 48px */
-  
-  /* Border radius */
-  --radius-sm: 0.25rem;   /* 4px */
-  --radius-md: 0.375rem;  /* 6px */
-  --radius-lg: 0.5rem;    /* 8px */
-  --radius-xl: 0.75rem;   /* 12px */
-  --radius-full: 9999px;
-  
-  /* Box shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* Font sizes */
-  --font-size-xs: 0.75rem;   /* 12px */
-  --font-size-sm: 0.875rem;  /* 14px */
-  --font-size-md: 1rem;      /* 16px */
-  --font-size-lg: 1.125rem;  /* 18px */
-  --font-size-xl: 1.25rem;   /* 20px */
-  --font-size-2xl: 1.5rem;   /* 24px */
-  
-  /* Font weights */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-bold: 700;
-  
-  /* Z-indices */
-  --z-dropdown: 10;
-  --z-sticky: 20;
-  --z-fixed: 30;
-  --z-modal: 40;
-  --z-popover: 50;
-  --z-tooltip: 60;
+	/* Base colors */
+	--color-primary: #3b82f6;
+	--color-primary-light: #60a5fa;
+	--color-primary-dark: #2563eb;
+
+	--color-secondary: #10b981;
+	--color-secondary-light: #34d399;
+	--color-secondary-dark: #059669;
+
+	--color-accent: #8b5cf6;
+	--color-accent-light: #a78bfa;
+	--color-accent-dark: #7c3aed;
+
+	--color-success: #10b981;
+	--color-warning: #f59e0b;
+	--color-error: #ef4444;
+
+	/* Light mode */
+	--color-bg-light: #f9fafb;
+	--color-surface-light: #ffffff;
+	--color-border-light: #e5e7eb;
+	--color-text-primary-light: #1f2937;
+	--color-text-secondary-light: #6b7280;
+	--color-text-tertiary-light: #9ca3af;
+
+	/* Dark mode */
+	--color-bg-dark: #1f2937;
+	--color-surface-dark: #111827;
+	--color-border-dark: #374151;
+	--color-text-primary-dark: #f9fafb;
+	--color-text-secondary-dark: #d1d5db;
+	--color-text-tertiary-dark: #9ca3af;
+
+	/* Functional colors */
+	--color-bg: var(--color-bg-light);
+	--color-surface: var(--color-surface-light);
+	--color-border: var(--color-border-light);
+	--color-text-primary: var(--color-text-primary-light);
+	--color-text-secondary: var(--color-text-secondary-light);
+	--color-text-tertiary: var(--color-text-tertiary-light);
+
+	/* Spacings */
+	--spacing-xs: 0.25rem; /* 4px */
+	--spacing-sm: 0.5rem; /* 8px */
+	--spacing-md: 1rem; /* 16px */
+	--spacing-lg: 1.5rem; /* 24px */
+	--spacing-xl: 2rem; /* 32px */
+	--spacing-2xl: 3rem; /* 48px */
+
+	/* Border radius */
+	--radius-sm: 0.25rem; /* 4px */
+	--radius-md: 0.375rem; /* 6px */
+	--radius-lg: 0.5rem; /* 8px */
+	--radius-xl: 0.75rem; /* 12px */
+	--radius-full: 9999px;
+
+	/* Box shadows */
+	--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+	/* Font sizes */
+	--font-size-xs: 0.75rem; /* 12px */
+	--font-size-sm: 0.875rem; /* 14px */
+	--font-size-md: 1rem; /* 16px */
+	--font-size-lg: 1.125rem; /* 18px */
+	--font-size-xl: 1.25rem; /* 20px */
+	--font-size-2xl: 1.5rem; /* 24px */
+
+	/* Font weights */
+	--font-weight-regular: 400;
+	--font-weight-medium: 500;
+	--font-weight-bold: 700;
+
+	/* Z-indices */
+	--z-dropdown: 10;
+	--z-sticky: 20;
+	--z-fixed: 30;
+	--z-modal: 40;
+	--z-popover: 50;
+	--z-tooltip: 60;
 }

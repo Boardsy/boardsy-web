@@ -4,7 +4,7 @@
 	import { isAuthenticated } from '$lib/stores/userStore';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
-	
+
 	let name = '';
 	let email = '';
 	let password = '';
@@ -12,47 +12,47 @@
 	let isSubmitting = false;
 	let errorMessage = '';
 	let successMessage = '';
-	
+
 	onMount(() => {
 		if ($isAuthenticated) {
 			goto('/boards');
 		}
 	});
-	
+
 	async function handleRegister() {
 		if (!email || !password || !confirmPassword) {
 			errorMessage = 'Please fill out all required fields';
 			return;
 		}
-		
+
 		if (password !== confirmPassword) {
 			errorMessage = 'Passwords do not match';
 			return;
 		}
-		
+
 		if (password.length < 6) {
 			errorMessage = 'Password must be at least 6 characters long';
 			return;
 		}
-		
+
 		isSubmitting = true;
 		errorMessage = '';
 		successMessage = '';
-		
+
 		try {
 			const { error } = await signUp(email, password);
-			
+
 			if (error) {
 				errorMessage = error.message || 'Failed to sign up';
 				return;
 			}
-			
+
 			successMessage = 'Registration successful! Please check your email to confirm your account.';
 			name = '';
 			email = '';
 			password = '';
 			confirmPassword = '';
-			
+
 			setTimeout(() => {
 				goto('/login');
 			}, 3000);
@@ -71,37 +71,37 @@
 			<h1>Create an account</h1>
 			<p>Join FlowLine to organize your work and boost productivity.</p>
 		</div>
-		
+
 		<form on:submit|preventDefault={handleRegister} class="auth-form">
 			{#if errorMessage}
 				<div class="auth-error">
 					{errorMessage}
 				</div>
 			{/if}
-			
+
 			{#if successMessage}
 				<div class="auth-success">
 					{successMessage}
 				</div>
 			{/if}
-			
+
 			<div class="form-group">
 				<label for="name" class="form-label">Name (optional)</label>
-				<input 
+				<input
 					id="name"
-					type="text" 
+					type="text"
 					bind:value={name}
 					class="form-input"
 					placeholder="Enter your name"
 					disabled={isSubmitting}
 				/>
 			</div>
-			
+
 			<div class="form-group">
 				<label for="email" class="form-label">Email</label>
-				<input 
+				<input
 					id="email"
-					type="email" 
+					type="email"
 					bind:value={email}
 					class="form-input"
 					placeholder="Enter your email"
@@ -109,12 +109,12 @@
 					required
 				/>
 			</div>
-			
+
 			<div class="form-group">
 				<label for="password" class="form-label">Password</label>
-				<input 
+				<input
 					id="password"
-					type="password" 
+					type="password"
 					bind:value={password}
 					class="form-input"
 					placeholder="Create a password"
@@ -123,12 +123,12 @@
 				/>
 				<p class="form-hint">Must be at least 6 characters</p>
 			</div>
-			
+
 			<div class="form-group">
 				<label for="confirmPassword" class="form-label">Confirm Password</label>
-				<input 
+				<input
 					id="confirmPassword"
-					type="password" 
+					type="password"
 					bind:value={confirmPassword}
 					class="form-input"
 					placeholder="Confirm your password"
@@ -136,16 +136,15 @@
 					required
 				/>
 			</div>
-			
+
 			<div class="form-terms">
-				<p>By clicking the button below, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+				<p>
+					By clicking the button below, you agree to our <a href="/terms">Terms of Service</a> and
+					<a href="/privacy">Privacy Policy</a>.
+				</p>
 			</div>
-			
-			<button 
-				type="submit" 
-				class="btn btn-primary btn-full" 
-				disabled={isSubmitting}
-			>
+
+			<button type="submit" class="btn btn-primary btn-full" disabled={isSubmitting}>
 				{#if isSubmitting}
 					<Spinner size="small" color="white" />
 				{:else}
@@ -153,7 +152,7 @@
 				{/if}
 			</button>
 		</form>
-		
+
 		<div class="auth-footer">
 			<p>Already have an account? <a href="/login">Log in</a></p>
 		</div>
@@ -168,7 +167,7 @@
 		min-height: calc(100vh - 64px);
 		padding: var(--spacing-md);
 	}
-	
+
 	.auth-card {
 		background-color: var(--color-surface);
 		border-radius: var(--radius-lg);
@@ -177,27 +176,27 @@
 		max-width: 400px;
 		padding: var(--spacing-xl);
 	}
-	
+
 	.auth-header {
 		margin-bottom: var(--spacing-lg);
 		text-align: center;
 	}
-	
+
 	.auth-header h1 {
 		font-size: var(--font-size-2xl);
 		font-weight: var(--font-weight-bold);
 		margin-bottom: var(--spacing-xs);
 		color: var(--color-text-primary);
 	}
-	
+
 	.auth-header p {
 		color: var(--color-text-secondary);
 	}
-	
+
 	.auth-form {
 		margin-bottom: var(--spacing-lg);
 	}
-	
+
 	.auth-error {
 		background-color: rgba(239, 68, 68, 0.1);
 		color: var(--color-error);
@@ -206,7 +205,7 @@
 		margin-bottom: var(--spacing-md);
 		font-size: var(--font-size-sm);
 	}
-	
+
 	.auth-success {
 		background-color: rgba(16, 185, 129, 0.1);
 		color: var(--color-secondary);
@@ -215,23 +214,23 @@
 		margin-bottom: var(--spacing-md);
 		font-size: var(--font-size-sm);
 	}
-	
+
 	.form-hint {
 		font-size: var(--font-size-xs);
 		color: var(--color-text-tertiary);
 		margin-top: var(--spacing-xs);
 	}
-	
+
 	.form-terms {
 		margin-bottom: var(--spacing-md);
 		font-size: var(--font-size-sm);
 		color: var(--color-text-secondary);
 	}
-	
+
 	.form-terms a {
 		color: var(--color-primary);
 	}
-	
+
 	.btn-full {
 		width: 100%;
 		display: flex;
@@ -239,13 +238,13 @@
 		align-items: center;
 		height: 42px;
 	}
-	
+
 	.auth-footer {
 		text-align: center;
 		color: var(--color-text-secondary);
 		font-size: var(--font-size-sm);
 	}
-	
+
 	.auth-footer a {
 		color: var(--color-primary);
 		font-weight: var(--font-weight-medium);

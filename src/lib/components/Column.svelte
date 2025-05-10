@@ -4,19 +4,19 @@
 	import { createCard } from '$lib/stores/boardStore';
 	import CardItem from '$lib/components/CardItem.svelte';
 	import { dndzone } from 'svelte-dnd-action';
-	
+
 	export let column: Column;
-	
+
 	const dispatch = createEventDispatcher<{
 		cardMove: { cardId: string; columnId: string; position: number };
 		cardReorder: { columnId: string; cardIds: string[] };
 	}>();
-	
+
 	let newCardTitle = '';
 	let isAddingCard = false;
 	let isTyping = false;
 	let errorMessage = '';
-	
+
 	function toggleAddCard() {
 		isAddingCard = !isAddingCard;
 		if (isAddingCard) {
@@ -29,16 +29,16 @@
 			errorMessage = '';
 		}
 	}
-	
+
 	async function handleAddCard() {
 		if (!newCardTitle.trim()) {
 			errorMessage = 'Title is required';
 			return;
 		}
-		
+
 		isTyping = true;
 		errorMessage = '';
-		
+
 		try {
 			await createCard(column.id, newCardTitle);
 			newCardTitle = '';
@@ -50,7 +50,7 @@
 			isTyping = false;
 		}
 	}
-	
+
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -59,17 +59,17 @@
 			toggleAddCard();
 		}
 	}
-	
+
 	function handleDndConsider(e: CustomEvent<{ items: any[] }>) {
 		const newItems = e.detail.items;
 		column = { ...column, cards: newItems };
 	}
-	
+
 	function handleDndFinalize(e: CustomEvent<{ items: any[] }>) {
 		const newItems = e.detail.items;
 		column = { ...column, cards: newItems };
-		
-		const cardIds = newItems.map(item => item.id);
+
+		const cardIds = newItems.map((item) => item.id);
 		dispatch('cardReorder', { columnId: column.id, cardIds });
 	}
 </script>
@@ -79,22 +79,28 @@
 		<h2 class="column-title">{column.title}</h2>
 		<span class="column-count">{column.cards.length}</span>
 	</div>
-	
-	<div class="column-body" 
-		use:dndzone={{items: column.cards, type: 'card', dropFromOthersDisabled: false, dragDisabled: isAddingCard}}
+
+	<div
+		class="column-body"
+		use:dndzone={{
+			items: column.cards,
+			type: 'card',
+			dropFromOthersDisabled: false,
+			dragDisabled: isAddingCard
+		}}
 		on:consider={handleDndConsider}
 		on:finalize={handleDndFinalize}
 	>
 		{#each column.cards as card (card.id)}
 			<CardItem {card} />
 		{/each}
-		
+
 		{#if isAddingCard}
 			<div class="add-card-form">
 				{#if errorMessage}
 					<div class="error-message">{errorMessage}</div>
 				{/if}
-				
+
 				<textarea
 					id="new-card-{column.id}"
 					class="form-input"
@@ -104,19 +110,19 @@
 					on:keydown={handleKeyPress}
 					rows="3"
 				></textarea>
-				
+
 				<div class="add-card-actions">
-					<button 
-						type="button" 
-						class="btn btn-primary btn-sm" 
+					<button
+						type="button"
+						class="btn btn-primary btn-sm"
 						on:click={handleAddCard}
 						disabled={isTyping}
 					>
 						Add Card
 					</button>
-					<button 
-						type="button" 
-						class="btn btn-icon" 
+					<button
+						type="button"
+						class="btn btn-icon"
 						on:click={toggleAddCard}
 						disabled={isTyping}
 						aria-label="Cancel"
@@ -127,11 +133,9 @@
 			</div>
 		{/if}
 	</div>
-	
+
 	{#if !isAddingCard}
-		<div class="add-card-btn" on:click={toggleAddCard}>
-			+ Add a card
-		</div>
+		<div class="add-card-btn" on:click={toggleAddCard}>+ Add a card</div>
 	{/if}
 </div>
 
@@ -147,13 +151,13 @@
 		height: fit-content;
 		max-height: 100%;
 	}
-	
+
 	@media (prefers-color-scheme: dark) {
 		.board-column {
 			background-color: var(--color-bg-dark);
 		}
 	}
-	
+
 	.column-header {
 		padding: var(--spacing-md);
 		border-bottom: 1px solid var(--color-border);
@@ -161,12 +165,12 @@
 		justify-content: space-between;
 		align-items: center;
 	}
-	
+
 	.column-title {
 		font-weight: var(--font-weight-medium);
 		font-size: var(--font-size-md);
 	}
-	
+
 	.column-count {
 		background-color: var(--color-bg);
 		color: var(--color-text-secondary);
@@ -174,7 +178,7 @@
 		padding: 0 8px;
 		font-size: var(--font-size-xs);
 	}
-	
+
 	.column-body {
 		padding: var(--spacing-md);
 		flex-grow: 1;
@@ -182,7 +186,7 @@
 		min-height: 50px; /* For empty columns */
 		max-height: calc(100vh - 180px);
 	}
-	
+
 	.add-card-btn {
 		padding: var(--spacing-md);
 		text-align: center;
@@ -193,29 +197,29 @@
 		border-bottom-left-radius: var(--radius-lg);
 		border-bottom-right-radius: var(--radius-lg);
 	}
-	
+
 	.add-card-btn:hover {
 		background-color: rgba(0, 0, 0, 0.05);
 		color: var(--color-text-primary);
 	}
-	
+
 	.add-card-form {
 		margin-bottom: var(--spacing-md);
 	}
-	
+
 	.error-message {
 		color: var(--color-error);
 		font-size: var(--font-size-xs);
 		margin-bottom: var(--spacing-xs);
 	}
-	
+
 	.add-card-actions {
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-sm);
 		margin-top: var(--spacing-sm);
 	}
-	
+
 	.btn-icon {
 		width: 32px;
 		height: 32px;
@@ -227,7 +231,7 @@
 		border-radius: var(--radius-md);
 		transition: background-color 0.2s;
 	}
-	
+
 	.btn-icon:hover {
 		background-color: rgba(0, 0, 0, 0.05);
 	}

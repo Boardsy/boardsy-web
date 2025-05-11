@@ -33,6 +33,8 @@
 
 .btn-primary:hover {
 	background-color: var(--color-primary-dark);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
@@ -42,15 +44,19 @@
 
 .btn-secondary:hover {
 	background-color: var(--color-secondary-dark);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-md);
 }
 
 .btn-outlined {
 	border: 1px solid var(--color-border);
 	background-color: transparent;
+	color: var(--color-text-primary);
 }
 
 .btn-outlined:hover {
-	background-color: rgba(0, 0, 0, 0.05);
+	background-color: rgba(0, 0, 0, 0.03);
+	border-color: var(--color-primary-light);
 }
 
 .btn-sm {
@@ -82,12 +88,13 @@
 	border-radius: var(--radius-md);
 	background-color: var(--color-surface);
 	color: var(--color-text-primary);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .form-input:focus {
 	border-color: var(--color-primary);
 	outline: none;
-	box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .form-error {
@@ -101,12 +108,14 @@
 	background-color: var(--color-surface);
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-md);
+	border: 1px solid rgba(0, 0, 0, 0.05);
 	overflow: hidden;
 }
 
 .card-header {
 	padding: var(--spacing-md);
 	border-bottom: 1px solid var(--color-border);
+	background-color: rgba(0, 0, 0, 0.01);
 }
 
 .card-body {
@@ -116,6 +125,7 @@
 .card-footer {
 	padding: var(--spacing-md);
 	border-top: 1px solid var(--color-border);
+	background-color: rgba(0, 0, 0, 0.01);
 }
 
 /* Badge */
@@ -129,17 +139,17 @@
 }
 
 .badge-primary {
-	background-color: var(--color-primary-light);
+	background-color: rgba(59, 130, 246, 0.15);
 	color: var(--color-primary-dark);
 }
 
 .badge-secondary {
-	background-color: var(--color-secondary-light);
+	background-color: rgba(16, 185, 129, 0.15);
 	color: var(--color-secondary-dark);
 }
 
 .badge-accent {
-	background-color: var(--color-accent-light);
+	background-color: rgba(139, 92, 246, 0.15);
 	color: var(--color-accent-dark);
 }
 
@@ -150,11 +160,9 @@
 	padding: var(--spacing-md);
 	margin-bottom: var(--spacing-sm);
 	box-shadow: var(--shadow-sm);
-	border-left: 3px solid var(--color-primary);
+	border: 1px solid rgba(0, 0, 0, 0.04);
 	cursor: pointer;
-	transition:
-		transform 0.2s,
-		box-shadow 0.2s;
+	transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .task-card:hover {
@@ -165,6 +173,7 @@
 .task-card-title {
 	font-weight: var(--font-weight-medium);
 	margin-bottom: var(--spacing-xs);
+	color: var(--color-text-primary);
 }
 
 .task-card-description {
@@ -194,14 +203,17 @@
 	flex-direction: column;
 	min-width: 280px;
 	max-width: 280px;
-	background-color: var(--color-bg-light);
+	background-color: var(--color-surface);
 	border-radius: var(--radius-lg);
 	margin-right: var(--spacing-md);
+	box-shadow: var(--shadow-md);
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	overflow: hidden;
 }
 
 @media (prefers-color-scheme: dark) {
 	.board-column {
-		background-color: var(--color-bg-dark);
+		border-color: rgba(255, 255, 255, 0.05);
 	}
 }
 
@@ -211,15 +223,23 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	background-color: rgba(248, 250, 252, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+	.column-header {
+		background-color: rgba(30, 41, 59, 0.8);
+	}
 }
 
 .column-title {
 	font-weight: var(--font-weight-medium);
+	color: var(--color-text-primary);
 }
 
 .column-count {
-	background-color: var(--color-bg);
-	color: var(--color-text-secondary);
+	background-color: rgba(59, 130, 246, 0.1);
+	color: var(--color-primary);
 	border-radius: 999px;
 	padding: 0 8px;
 	font-size: var(--font-size-xs);
@@ -229,19 +249,21 @@
 	padding: var(--spacing-md);
 	flex-grow: 1;
 	overflow-y: auto;
+	background-color: var(--color-surface);
 }
 
 .add-card-btn {
 	padding: var(--spacing-md);
 	text-align: center;
 	color: var(--color-text-secondary);
-	transition: background-color 0.2s;
+	transition: all 0.2s;
 	border-top: 1px solid var(--color-border);
+	cursor: pointer;
 }
 
 .add-card-btn:hover {
-	background-color: rgba(0, 0, 0, 0.05);
-	color: var(--color-text-primary);
+	background-color: rgba(59, 130, 246, 0.05);
+	color: var(--color-primary);
 }
 
 /* Board styles */
@@ -250,6 +272,7 @@
 	height: calc(100vh - 64px);
 	overflow-x: auto;
 	padding: var(--spacing-md);
+	background-color: var(--color-bg);
 }
 
 .board-wrapper {
@@ -279,4 +302,126 @@
 		min-width: 240px;
 		max-width: 240px;
 	}
+}
+
+/* Light mode specific fixes */
+/* Force proper text colors in light mode */
+.theme-light {
+	/* Ensure text is dark in light mode */
+	color: var(--color-text-primary-light);
+}
+
+/* Card item specific fixes */
+.theme-light .card .title,
+.theme-light .card h3 {
+	color: var(--color-text-primary-light);
+}
+
+.theme-light .card .description,
+.theme-light .card p {
+	color: var(--color-text-secondary-light) !important;
+}
+
+/* Column specific fixes */
+.theme-light .column-header h2,
+.theme-light .column-title {
+	color: var(--color-text-primary-light);
+}
+
+/* Fix for any white text on light backgrounds */
+.theme-light .footer,
+.theme-light .due-date,
+.theme-light .card-footer,
+.theme-light .task-card-footer {
+	color: var(--color-text-secondary-light);
+}
+
+/* Menu and dropdown text color fixes */
+.theme-light .menu-item {
+	color: var(--color-text-primary-light);
+}
+
+.theme-light .menu-item.delete {
+	color: var(--color-error);
+}
+
+/* Form inputs in light mode */
+.theme-light input,
+.theme-light textarea,
+.theme-light select {
+	color: var(--color-text-primary-light);
+}
+
+/* Button text should remain white when appropriate */
+.btn-primary,
+.btn-secondary,
+.btn-primary:hover,
+.btn-secondary:hover {
+	color: white !important;
+}
+
+/* Settings page specific fixes */
+.theme-light .settings-header h1 {
+	color: var(--color-text-primary-light);
+}
+
+.theme-light .settings-header p,
+.theme-light .form-hint,
+.theme-light .form-label {
+	color: var(--color-text-secondary-light);
+}
+
+.theme-light .nav-link {
+	color: var(--color-text-secondary-light);
+}
+
+.theme-light .nav-link.active {
+	color: var(--color-primary);
+}
+
+.theme-light .card h3 {
+	color: var(--color-text-primary-light);
+}
+
+/* Force proper contrast for important text elements */
+.theme-light h1, 
+.theme-light h2, 
+.theme-light h3, 
+.theme-light h4, 
+.theme-light h5, 
+.theme-light h6 {
+	color: var(--color-text-primary-light) !important;
+}
+
+.theme-light p, 
+.theme-light span, 
+.theme-light label, 
+.theme-light li {
+	color: var(--color-text-secondary-light);
+}
+
+/* Badge text fixes */
+.theme-light .badge {
+	color: var(--color-text-primary-light);
+}
+
+.theme-light .badge-primary {
+	color: var(--color-primary-dark);
+}
+
+.theme-light .badge-secondary {
+	color: var(--color-secondary-dark);
+}
+
+.theme-light .badge-accent {
+	color: var(--color-accent-dark);
+}
+
+/* Add card button text */
+.theme-light .add-card-btn {
+	color: var(--color-text-secondary-light);
+}
+
+.theme-light .add-card-btn:hover {
+	color: var(--color-primary);
 }

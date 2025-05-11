@@ -64,6 +64,34 @@
 		}
 	}
 	
+	function startEditTitle() {
+		editedTitle = column.title;
+		isEditingTitle = true;
+		setTimeout(() => {
+			const titleInput = document.getElementById(`column-title-${column.id}`);
+			if (titleInput) titleInput.focus();
+		}, 0);
+	}
+	
+	async function saveColumnTitle() {
+		if (editedTitle.trim() && editedTitle !== column.title) {
+			try {
+				await updateColumnTitle(column.id, editedTitle.trim());
+			} catch (error) {
+				console.error('Error updating column title:', error);
+				editedTitle = column.title;
+			}
+		} else {
+			editedTitle = column.title;
+		}
+		isEditingTitle = false;
+	}
+	
+	function cancelEditTitle() {
+		editedTitle = column.title;
+		isEditingTitle = false;
+	}
+	
 	function handleTitleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -100,40 +128,13 @@
 			showDeleteModal = false;
 		}
 	}
-	
-	function startEditTitle() {
-		editedTitle = column.title;
-		isEditingTitle = true;
-		setTimeout(() => {
-			const titleInput = document.getElementById(`column-title-${column.id}`);
-			if (titleInput) titleInput.focus();
-		}, 0);
-	}
-	
-	async function saveColumnTitle() {
-		if (editedTitle.trim() && editedTitle !== column.title) {
-			try {
-				await updateColumnTitle(column.id, editedTitle.trim());
-			} catch (error) {
-				console.error('Error updating column title:', error);
-				editedTitle = column.title;
-			}
-		} else {
-			editedTitle = column.title;
-		}
-		isEditingTitle = false;
-	}
-	
-	function cancelEditTitle() {
-		editedTitle = column.title;
-		isEditingTitle = false;
-	}
 </script>
 
-<div class="board-column">
+<div class="column">
+	<!-- Column Header -->
 	<div class="column-header">
 		{#if isEditingTitle}
-			<div class="column-title-edit">
+			<div class="title-edit">
 				<input 
 					id="column-title-{column.id}" 
 					type="text" 
@@ -144,21 +145,23 @@
 				/>
 			</div>
 		{:else}
-			<div class="column-title-container" on:dblclick={startEditTitle}>
+			<div class="title-container" on:dblclick={startEditTitle}>
 				<h2 class="column-title">{column.title}</h2>
 				<button class="edit-button" on:click={startEditTitle} aria-label="Edit column title">
-					✏️
+					<span>✏️</span>
 				</button>
 			</div>
 		{/if}
-		<div class="column-header-actions">
+		
+		<div class="header-actions">
 			<span class="column-count">{column.cards.length}</span>
 			<button class="delete-button" on:click={confirmDeleteColumn} aria-label="Delete column">
-				🗑️
+				<span>🗑️</span>
 			</button>
 		</div>
 	</div>
 
+	<!-- Column Body / Cards Area -->
 	<div
 		class="column-body"
 		use:dndzone={{
@@ -182,7 +185,7 @@
 
 				<textarea
 					id="new-card-{column.id}"
-					class="form-input"
+					class="card-textarea"
 					placeholder="Enter a title for this card..."
 					bind:value={newCardTitle}
 					disabled={isTyping}
@@ -190,10 +193,10 @@
 					rows="3"
 				></textarea>
 
-				<div class="add-card-actions">
+				<div class="form-actions">
 					<button
 						type="button"
-						class="btn btn-primary btn-sm"
+						class="btn primary"
 						on:click={handleAddCard}
 						disabled={isTyping}
 					>
@@ -201,7 +204,7 @@
 					</button>
 					<button
 						type="button"
-						class="btn btn-icon"
+						class="btn-icon"
 						on:click={toggleAddCard}
 						disabled={isTyping}
 						aria-label="Cancel"
@@ -213,11 +216,16 @@
 		{/if}
 	</div>
 
+	<!-- Add Card Button -->
 	{#if !isAddingCard}
-		<div class="add-card-btn" on:click={toggleAddCard}>+ Add a card</div>
+		<div class="add-card-btn" on:click={toggleAddCard}>
+			<span class="plus-icon">+</span>
+			<span>Add a card</span>
+		</div>
 	{/if}
 </div>
 
+<!-- Delete Confirmation Modal -->
 {#if showDeleteModal}
 	<DeleteConfirmModal 
 		title="Delete Column" 
@@ -229,166 +237,305 @@
 {/if}
 
 <style>
-	.board-column {
+	/* Column Base */
+	.column {
 		display: flex;
 		flex-direction: column;
 		min-width: 280px;
 		max-width: 280px;
-		background-color: var(--color-bg-light);
-		border-radius: var(--radius-lg);
-		margin-right: var(--spacing-md);
+		background-color: white;
+		border-radius: 8px;
+		margin-right: 16px;
 		height: fit-content;
 		max-height: 100%;
-		box-shadow: var(--shadow-sm);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+		overflow: hidden;
 	}
 
 	@media (prefers-color-scheme: dark) {
-		.board-column {
-			background-color: var(--color-bg-dark);
+		.column {
+			background-color: #1e293b;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 		}
 	}
 
+	/* Column Header */
 	.column-header {
-		padding: var(--spacing-md);
-		border-bottom: 1px solid var(--color-border);
+		padding: 12px 16px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		background-color: #f8fafc;
 	}
-	
-	.column-title-container {
+
+	@media (prefers-color-scheme: dark) {
+		.column-header {
+			background-color: #2d3748;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		}
+	}
+
+	.title-container {
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-xs);
+		gap: 6px;
+		padding: 4px;
+		border-radius: 4px;
 		cursor: pointer;
-		padding: 2px 4px;
-		border-radius: var(--radius-sm);
 		transition: background-color 0.2s;
 	}
-	
-	.column-title-container:hover {
+
+	.title-container:hover {
 		background-color: rgba(0, 0, 0, 0.05);
-	}
-	
-	.column-title-edit {
-		flex: 1;
-	}
-	
-	.title-input {
-		width: 100%;
-		font-size: var(--font-size-md);
-		font-weight: var(--font-weight-medium);
-		padding: 2px 4px;
-		border: 1px solid var(--color-primary);
-		border-radius: var(--radius-sm);
-	}
-	
-	.column-header-actions {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-xs);
 	}
 
 	.column-title {
-		font-weight: var(--font-weight-medium);
-		font-size: var(--font-size-md);
+		font-weight: 600;
+		font-size: 16px;
 		margin: 0;
+		color: #0f172a;
 	}
-	
-	.edit-button {
-		opacity: 0;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.85rem;
-		padding: 2px;
-		transition: opacity 0.2s;
+
+	@media (prefers-color-scheme: dark) {
+		.column-title {
+			color: #f1f5f9;
+		}
 	}
-	
-	.column-title-container:hover .edit-button {
-		opacity: 0.7;
+
+	.title-edit {
+		flex: 1;
 	}
-	
-	.edit-button:hover {
-		opacity: 1 !important;
+
+	.title-input {
+		width: 100%;
+		font-size: 16px;
+		font-weight: 600;
+		padding: 6px;
+		border: 1px solid #3b82f6;
+		border-radius: 4px;
+		background-color: white;
+		color: #0f172a;
 	}
-	
-	.delete-button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 1rem;
-		padding: 2px;
-		opacity: 0.5;
-		transition: opacity 0.2s;
+
+	@media (prefers-color-scheme: dark) {
+		.title-input {
+			background-color: #334155;
+			color: #f1f5f9;
+			border-color: #60a5fa;
+		}
 	}
-	
-	.delete-button:hover {
-		opacity: 1;
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
 	.column-count {
-		background-color: var(--color-bg);
-		color: var(--color-text-secondary);
-		border-radius: 999px;
-		padding: 0 8px;
-		font-size: var(--font-size-xs);
+		background-color: rgba(59, 130, 246, 0.1);
+		color: #3b82f6;
+		border-radius: 16px;
+		padding: 1px 8px;
+		font-size: 12px;
+		font-weight: 500;
 	}
 
+	@media (prefers-color-scheme: dark) {
+		.column-count {
+			background-color: rgba(59, 130, 246, 0.2);
+		}
+	}
+
+	.edit-button, .delete-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 14px;
+		padding: 2px;
+		opacity: 0.6;
+		transition: opacity 0.2s;
+		border-radius: 4px;
+	}
+
+	.edit-button {
+		opacity: 0;
+	}
+
+	.title-container:hover .edit-button {
+		opacity: 0.6;
+	}
+
+	.edit-button:hover, 
+	.delete-button:hover {
+		opacity: 1;
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.edit-button:hover, 
+		.delete-button:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
+	}
+
+	/* Column Body */
 	.column-body {
-		padding: var(--spacing-md);
+		padding: 12px;
 		flex-grow: 1;
 		overflow-y: auto;
 		min-height: 50px;
-		max-height: calc(100vh - 180px);
+		max-height: calc(100vh - 170px);
+		background-color: white;
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		.column-body {
+			background-color: #1e293b;
+		}
 	}
 
-	.add-card-btn {
-		padding: var(--spacing-md);
-		text-align: center;
-		color: var(--color-text-secondary);
-		transition: background-color 0.2s;
-		border-top: 1px solid var(--color-border);
-		cursor: pointer;
-		border-bottom-left-radius: var(--radius-lg);
-		border-bottom-right-radius: var(--radius-lg);
-	}
-
-	.add-card-btn:hover {
-		background-color: rgba(0, 0, 0, 0.05);
-		color: var(--color-text-primary);
-	}
-
+	/* Add Card Form */
 	.add-card-form {
-		margin-bottom: var(--spacing-md);
+		background-color: white;
+		border-radius: 8px;
+		padding: 12px;
+		margin-bottom: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.add-card-form {
+			background-color: #2d3748;
+		}
 	}
 
 	.error-message {
-		color: var(--color-error);
-		font-size: var(--font-size-xs);
-		margin-bottom: var(--spacing-xs);
+		color: #ef4444;
+		font-size: 12px;
+		margin-bottom: 8px;
+		padding: 4px 8px;
+		background-color: rgba(239, 68, 68, 0.1);
+		border-radius: 4px;
 	}
 
-	.add-card-actions {
+	.card-textarea {
+		width: 100%;
+		border: 1px solid #e2e8f0;
+		border-radius: 4px;
+		padding: 8px;
+		font-size: 14px;
+		resize: vertical;
+		margin-bottom: 8px;
+		background-color: white;
+		color: #0f172a;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.card-textarea {
+			background-color: #1e293b;
+			border-color: #4b5563;
+			color: #f1f5f9;
+		}
+	}
+
+	.form-actions {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+	}
+
+	/* Add Card Button */
+	.add-card-btn {
+		padding: 10px 12px;
+		margin: 0 12px 12px;
+		border-radius: 6px;
 		display: flex;
 		align-items: center;
-		gap: var(--spacing-sm);
-		margin-top: var(--spacing-sm);
+		gap: 6px;
+		color: #475569;
+		font-size: 14px;
+		transition: background-color 0.2s, color 0.2s;
+		cursor: pointer;
+	}
+
+	.add-card-btn:hover {
+		background-color: rgba(59, 130, 246, 0.1);
+		color: #3b82f6;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.add-card-btn {
+			color: #94a3b8;
+		}
+		
+		.add-card-btn:hover {
+			background-color: rgba(59, 130, 246, 0.2);
+			color: #60a5fa;
+		}
+	}
+
+	.plus-icon {
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	/* Buttons */
+	.btn {
+		padding: 6px 12px;
+		font-size: 14px;
+		border-radius: 4px;
+		font-weight: 500;
+		cursor: pointer;
+		border: none;
+		transition: background-color 0.2s;
+	}
+
+	.btn.primary {
+		background-color: #3b82f6;
+		color: white;
+	}
+
+	.btn.primary:hover {
+		background-color: #2563eb;
+	}
+
+	.btn.primary:disabled {
+		background-color: #93c5fd;
+		cursor: not-allowed;
 	}
 
 	.btn-icon {
-		width: 32px;
-		height: 32px;
+		width: 30px;
+		height: 30px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 1.5rem;
-		line-height: 1;
-		border-radius: var(--radius-md);
+		font-size: 24px;
+		border-radius: 4px;
+		background: none;
+		border: none;
+		color: #64748b;
+		cursor: pointer;
 		transition: background-color 0.2s;
 	}
 
 	.btn-icon:hover {
 		background-color: rgba(0, 0, 0, 0.05);
+	}
+
+	.btn-icon:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.btn-icon {
+			color: #94a3b8;
+		}
+		
+		.btn-icon:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
 	}
 </style>

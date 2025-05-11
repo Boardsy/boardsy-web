@@ -5,15 +5,31 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import { initUserStore, isAuthenticated, isLoading as authLoading } from '$lib/stores/userStore';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import { initTheme, setupThemeListener } from '$lib/services/themeManager';
 
 	let appLoading = true;
 
 	$: isHomePage = $page.url.pathname === '/';
 	$: isAuthPage = $page.url.pathname === '/login' || $page.url.pathname === '/register';
 
-	onMount(async () => {
-		await initUserStore();
-		appLoading = false;
+	onMount(() => {
+		const initialize = async () => {
+			await initUserStore();
+			
+			initTheme();
+			
+			const cleanup = setupThemeListener();
+			
+			appLoading = false;
+			
+			return cleanup;
+		};
+
+		initialize();
+
+		return () => {
+			initialize().then(cleanup => cleanup());
+		};
 	});
 </script>
 

@@ -114,7 +114,7 @@
 {:else}
 	<button class="add-column-button" on:click={toggleAdding}>
 		<span class="add-icon">+</span>
-		<span>Add another column</span>
+		<span>Add a column</span>
 	</button>
 {/if}
 

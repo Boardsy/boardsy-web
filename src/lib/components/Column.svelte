@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { Column, Card } from '$lib/types/models';
-	import { createCard } from '$lib/stores/boardStore';
+	import { createCard, deleteColumn, updateColumnTitle } from '$lib/stores/boardStore';
 	import CardItem from '$lib/components/CardItem.svelte';
+	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
 	import { dndzone } from 'svelte-dnd-action';
 
 	export let column: Column;
@@ -16,6 +17,9 @@
 	let isAddingCard = false;
 	let isTyping = false;
 	let errorMessage = '';
+	let showDeleteModal = false;
+	let isEditingTitle = false;
+	let editedTitle = column.title;
 
 	function toggleAddCard() {
 		isAddingCard = !isAddingCard;
@@ -59,6 +63,15 @@
 			toggleAddCard();
 		}
 	}
+	
+	function handleTitleKeyPress(event: KeyboardEvent) {
+		if (event.key === 'Enter' && !event.shiftKey) {
+			event.preventDefault();
+			saveColumnTitle();
+		} else if (event.key === 'Escape') {
+			cancelEditTitle();
+		}
+	}
 
 	function handleDndConsider(e: CustomEvent<{ items: any[] }>) {
 		const newItems = e.detail.items;
@@ -72,12 +85,78 @@
 		const cardIds = newItems.map((item) => item.id);
 		dispatch('cardReorder', { columnId: column.id, cardIds });
 	}
+	
+	function confirmDeleteColumn() {
+		showDeleteModal = true;
+	}
+	
+	async function handleDeleteColumn() {
+		try {
+			await deleteColumn(column.id);
+			showDeleteModal = false;
+		} catch (error) {
+			console.error('Error deleting column:', error);
+			errorMessage = 'Failed to delete column';
+			showDeleteModal = false;
+		}
+	}
+	
+	function startEditTitle() {
+		editedTitle = column.title;
+		isEditingTitle = true;
+		setTimeout(() => {
+			const titleInput = document.getElementById(`column-title-${column.id}`);
+			if (titleInput) titleInput.focus();
+		}, 0);
+	}
+	
+	async function saveColumnTitle() {
+		if (editedTitle.trim() && editedTitle !== column.title) {
+			try {
+				await updateColumnTitle(column.id, editedTitle.trim());
+			} catch (error) {
+				console.error('Error updating column title:', error);
+				editedTitle = column.title;
+			}
+		} else {
+			editedTitle = column.title;
+		}
+		isEditingTitle = false;
+	}
+	
+	function cancelEditTitle() {
+		editedTitle = column.title;
+		isEditingTitle = false;
+	}
 </script>
 
 <div class="board-column">
 	<div class="column-header">
-		<h2 class="column-title">{column.title}</h2>
-		<span class="column-count">{column.cards.length}</span>
+		{#if isEditingTitle}
+			<div class="column-title-edit">
+				<input 
+					id="column-title-{column.id}" 
+					type="text" 
+					bind:value={editedTitle} 
+					on:blur={saveColumnTitle}
+					on:keydown={handleTitleKeyPress}
+					class="title-input"
+				/>
+			</div>
+		{:else}
+			<div class="column-title-container" on:dblclick={startEditTitle}>
+				<h2 class="column-title">{column.title}</h2>
+				<button class="edit-button" on:click={startEditTitle} aria-label="Edit column title">
+					✏️
+				</button>
+			</div>
+		{/if}
+		<div class="column-header-actions">
+			<span class="column-count">{column.cards.length}</span>
+			<button class="delete-button" on:click={confirmDeleteColumn} aria-label="Delete column">
+				🗑️
+			</button>
+		</div>
 	</div>
 
 	<div
@@ -92,7 +171,7 @@
 		on:finalize={handleDndFinalize}
 	>
 		{#each column.cards as card (card.id)}
-			<CardItem {card} />
+			<CardItem {card} columnId={column.id} />
 		{/each}
 
 		{#if isAddingCard}
@@ -139,6 +218,16 @@
 	{/if}
 </div>
 
+{#if showDeleteModal}
+	<DeleteConfirmModal 
+		title="Delete Column" 
+		message="Are you sure you want to delete this column? All cards within this column will be permanently deleted."
+		confirmText="Delete Column"
+		on:confirm={handleDeleteColumn}
+		on:cancel={() => showDeleteModal = false}
+	/>
+{/if}
+
 <style>
 	.board-column {
 		display: flex;
@@ -150,6 +239,7 @@
 		margin-right: var(--spacing-md);
 		height: fit-content;
 		max-height: 100%;
+		box-shadow: var(--shadow-sm);
 	}
 
 	@media (prefers-color-scheme: dark) {
@@ -165,10 +255,76 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+	
+	.column-title-container {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+		cursor: pointer;
+		padding: 2px 4px;
+		border-radius: var(--radius-sm);
+		transition: background-color 0.2s;
+	}
+	
+	.column-title-container:hover {
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+	
+	.column-title-edit {
+		flex: 1;
+	}
+	
+	.title-input {
+		width: 100%;
+		font-size: var(--font-size-md);
+		font-weight: var(--font-weight-medium);
+		padding: 2px 4px;
+		border: 1px solid var(--color-primary);
+		border-radius: var(--radius-sm);
+	}
+	
+	.column-header-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-xs);
+	}
 
 	.column-title {
 		font-weight: var(--font-weight-medium);
 		font-size: var(--font-size-md);
+		margin: 0;
+	}
+	
+	.edit-button {
+		opacity: 0;
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.85rem;
+		padding: 2px;
+		transition: opacity 0.2s;
+	}
+	
+	.column-title-container:hover .edit-button {
+		opacity: 0.7;
+	}
+	
+	.edit-button:hover {
+		opacity: 1 !important;
+	}
+	
+	.delete-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 1rem;
+		padding: 2px;
+		opacity: 0.5;
+		transition: opacity 0.2s;
+	}
+	
+	.delete-button:hover {
+		opacity: 1;
 	}
 
 	.column-count {
@@ -183,7 +339,7 @@
 		padding: var(--spacing-md);
 		flex-grow: 1;
 		overflow-y: auto;
-		min-height: 50px; /* For empty columns */
+		min-height: 50px;
 		max-height: calc(100vh - 180px);
 	}
 

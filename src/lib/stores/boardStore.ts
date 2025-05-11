@@ -258,6 +258,57 @@ export const createBoard = async (
 		isLoading.set(false);
 	}
 };
+
+export const deleteBoard = async (boardId: string) => {
+	isLoading.set(true);
+	error.set(null);
+
+	try {
+		const { data: userData } = await supabase.auth.getUser();
+		const userId = userData.user?.id;
+
+		if (!userId) {
+			throw new Error('User not authenticated');
+		}
+
+		const { data: boardData, error: boardError } = await supabase
+			.from('boards')
+			.select('owner_id')
+			.eq('id', boardId)
+			.single();
+
+		if (boardError) {
+			throw boardError;
+		}
+
+		if (!boardData || boardData.owner_id !== userId) {
+			throw new Error('You do not have permission to delete this board');
+		}
+
+		const { error: deleteError } = await supabase
+			.from('boards')
+			.delete()
+			.eq('id', boardId);
+
+		if (deleteError) {
+			throw deleteError;
+		}
+
+		boards.update((currentBoards) => {
+			return currentBoards.filter((board) => board.id !== boardId);
+		});
+		
+		currentBoard.set(null);
+
+	} catch (err) {
+		console.error('Error deleting board:', err);
+		error.set('Failed to delete board');
+		throw err;
+	} finally {
+		isLoading.set(false);
+	}
+};
+
 export const createCard = async (columnId: string, title: string, description?: string) => {
 	isLoading.set(true);
 	error.set(null);
@@ -311,6 +362,56 @@ export const createCard = async (columnId: string, title: string, description?: 
 	}
 };
 
+export const updateCard = async (cardId: string, updates: { title?: string; description?: string | null }) => {
+	isLoading.set(true);
+	error.set(null);
+
+	try {
+		const { error: updateError } = await supabase
+			.from('cards')
+			.update(updates)
+			.eq('id', cardId);
+
+		if (updateError) throw updateError;
+
+		const boardValue = get(currentBoard);
+		if (boardValue) {
+			await fetchBoardDetails(boardValue.id);
+		}
+	} catch (err) {
+		console.error('Error updating card:', err);
+		error.set('Failed to update card');
+		throw err;
+	} finally {
+		isLoading.set(false);
+	}
+};
+
+export const deleteCard = async (cardId: string, columnId: string) => {
+	isLoading.set(true);
+	error.set(null);
+
+	try {
+		const { error: deleteError } = await supabase
+			.from('cards')
+			.delete()
+			.eq('id', cardId);
+
+		if (deleteError) throw deleteError;
+
+		const boardValue = get(currentBoard);
+		if (boardValue) {
+			await fetchBoardDetails(boardValue.id);
+		}
+	} catch (err) {
+		console.error('Error deleting card:', err);
+		error.set('Failed to delete card');
+		throw err;
+	} finally {
+		isLoading.set(false);
+	}
+};
+
 export const moveCard = async (cardId: string, newColumnId: string, newPosition: number) => {
 	isLoading.set(true);
 	error.set(null);
@@ -359,6 +460,56 @@ export const reorderCards = async (columnId: string, cardIds: string[]) => {
 	} catch (err) {
 		console.error('Error reordering cards:', err);
 		error.set('Failed to reorder cards');
+	} finally {
+		isLoading.set(false);
+	}
+};
+
+export const deleteColumn = async (columnId: string) => {
+	isLoading.set(true);
+	error.set(null);
+
+	try {
+		const { error: deleteError } = await supabase
+			.from('columns')
+			.delete()
+			.eq('id', columnId);
+
+		if (deleteError) throw deleteError;
+
+		const boardValue = get(currentBoard);
+		if (boardValue) {
+			await fetchBoardDetails(boardValue.id);
+		}
+	} catch (err) {
+		console.error('Error deleting column:', err);
+		error.set('Failed to delete column');
+		throw err;
+	} finally {
+		isLoading.set(false);
+	}
+};
+
+export const updateColumnTitle = async (columnId: string, newTitle: string) => {
+	isLoading.set(true);
+	error.set(null);
+
+	try {
+		const { error: updateError } = await supabase
+			.from('columns')
+			.update({ title: newTitle })
+			.eq('id', columnId);
+
+		if (updateError) throw updateError;
+
+		const boardValue = get(currentBoard);
+		if (boardValue) {
+			await fetchBoardDetails(boardValue.id);
+		}
+	} catch (err) {
+		console.error('Error updating column title:', err);
+		error.set('Failed to update column title');
+		throw err;
 	} finally {
 		isLoading.set(false);
 	}

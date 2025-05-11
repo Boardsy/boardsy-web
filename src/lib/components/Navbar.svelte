@@ -8,7 +8,6 @@
 	let userMenuOpen = false;
 	let logoSrc = '/flowline-logo.png';
 	
-	// Check page types
 	$: isHomePage = $page.url.pathname === '/';
 	$: isAuthPage = $page.url.pathname === '/login' || $page.url.pathname === '/register';
 	$: showNavbar = !isHomePage || $isAuthenticated;
@@ -45,7 +44,6 @@
 {#if showNavbar}
 <header class="navbar">
 	{#if isAuthPage}
-		<!-- Special centered layout for login/register pages -->
 		<div class="centered-navbar-container">
 			<div class="centered-logo">
 				<a href="/" class="logo">
@@ -55,7 +53,6 @@
 			</div>
 		</div>
 	{:else}
-		<!-- Standard layout for all other pages (except homepage) -->
 		<div class="container navbar-container">
 			<div class="navbar-start">
 				<a href="/" class="logo">
@@ -76,10 +73,6 @@
 
 			<div class="navbar-end">
 				{#if $isAuthenticated}
-					<button class="btn btn-primary create-btn">
-						<span class="icon">+</span>
-						<span class="create-text">Create</span>
-					</button>
 
 					<div class="user-dropdown">
 						<button class="user-button" on:click={toggleUserMenu}>
@@ -166,8 +159,7 @@
 		top: 0;
 		z-index: var(--z-sticky);
 	}
-
-	/* Regular navbar styles */
+	
 	.navbar-container {
 		display: flex;
 		align-items: center;
@@ -178,13 +170,12 @@
 		padding: 0 var(--spacing-lg);
 	}
 
-	/* Centered navbar styles for login/register pages */
 	.centered-navbar-container {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		height: 100px; /* Shorter since it only has the logo */
+		height: 100px;
 		max-width: 1280px;
 		margin: 0 auto;
 		padding: 0 var(--spacing-lg);
@@ -249,16 +240,6 @@
 	.desktop-nav li.active a {
 		color: var(--color-primary);
 		font-weight: var(--font-weight-medium);
-	}
-
-	.create-btn {
-		display: none;
-		margin-right: var(--spacing-md);
-	}
-
-	.icon {
-		font-size: 1.2em;
-		margin-right: var(--spacing-xs);
 	}
 
 	.auth-buttons {
@@ -420,10 +401,6 @@
 			display: block;
 		}
 
-		.create-btn {
-			display: flex;
-		}
-
 		.auth-buttons {
 			display: flex;
 			gap: 12px;
@@ -461,21 +438,6 @@
 		.centered-logo .logo img {
 			width: 40px;
 			height: 40px;
-		}
-		
-		.create-text {
-			display: none;
-		}
-
-		.create-btn {
-			padding: var(--spacing-xs);
-			width: 32px;
-			height: 32px;
-			border-radius: 50%;
-		}
-
-		.icon {
-			margin-right: 0;
 		}
 	}
 </style>

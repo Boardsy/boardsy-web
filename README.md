@@ -1,6 +1,6 @@
 # FlowLine
 
-![Docker Build Status](https://github.com/YOUR_USERNAME/flowline/actions/workflows/docker-build.yml/badge.svg)
+![Docker Build Status](https://github.com/balionelis/flowline/actions/workflows/docker-build.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 FlowLine is a kanban board application designed to help you organize your work with simplicity and clarity. Built with SvelteKit and Supabase, it offers a clean, intuitive interface for task management and team collaboration.

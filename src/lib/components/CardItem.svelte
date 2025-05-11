@@ -104,7 +104,7 @@
 	}
 </script>
 
-<div class="task-card" on:dblclick={handleCardClick} role="button" tabindex="0">
+<div class="task-card override-border" on:dblclick={handleCardClick} role="button" tabindex="0" style="border-left: none !important;">
 	{#if isEditing}
 		<div class="card-edit-form">
 			<input 
@@ -141,20 +141,6 @@
 					{/each}
 				</div>
 			{/if}
-			<div class="card-actions" bind:this={cardActionsRef}>
-				<button class="card-menu-button" on:click={toggleCardMenu} aria-label="Card menu">⋮</button>
-				
-				{#if showCardMenu}
-					<div class="card-menu">
-						<button class="menu-item" on:click|stopPropagation={startEditing}>
-							<span class="menu-icon">✏️</span>Edit
-						</button>
-						<button class="menu-item menu-item-danger" on:click|stopPropagation={confirmDeleteCard}>
-							<span class="menu-icon">🗑️</span>Delete
-						</button>
-					</div>
-				{/if}
-			</div>
 		</div>
 
 		<h3 class="task-card-title">{card.title}</h3>
@@ -176,6 +162,21 @@
 					<div class="avatar-small">
 						{card.assignedTo.charAt(0).toUpperCase()}
 					</div>
+				</div>
+			{/if}
+		</div>
+		
+		<div class="card-actions" bind:this={cardActionsRef}>
+			<button class="card-menu-button" on:click={toggleCardMenu} aria-label="Card menu">⋮</button>
+			
+			{#if showCardMenu}
+				<div class="card-menu">
+					<button class="menu-item" on:click|stopPropagation={startEditing}>
+						<span class="menu-icon">✏️</span>Edit
+					</button>
+					<button class="menu-item menu-item-danger" on:click|stopPropagation={confirmDeleteCard}>
+						<span class="menu-icon">🗑️</span>Delete
+					</button>
 				</div>
 			{/if}
 		</div>
@@ -201,8 +202,16 @@
 		box-shadow: var(--shadow-sm);
 		position: relative;
 		transition: transform 0.2s, box-shadow 0.2s;
-		border-left: 3px solid var(--color-primary);
 		cursor: pointer;
+	}
+
+	/* Class specifically to override any border styles */
+	.override-border {
+		border: none !important;
+		border-left: none !important;
+		border-right: none !important;
+		border-top: none !important;
+		border-bottom: none !important;
 	}
 
 	.task-card:hover {
@@ -218,7 +227,9 @@
 	}
 	
 	.card-actions {
-		position: relative;
+		position: absolute;
+		bottom: var(--spacing-xs);
+		right: var(--spacing-xs);
 	}
 	
 	.card-menu-button {
@@ -229,7 +240,6 @@
 		line-height: 1;
 		color: var(--color-text-tertiary);
 		padding: 2px 4px;
-		margin-left: 170px;
 		border-radius: var(--radius-sm);
 		opacity: 0.5;
 		transition: all 0.2s;
@@ -246,7 +256,7 @@
 	
 	.card-menu {
 		position: absolute;
-		top: 100%;
+		bottom: 100%;
 		right: 0;
 		background-color: var(--color-surface);
 		border-radius: var(--radius-md);
@@ -255,7 +265,7 @@
 		min-width: 150px;
 		border: 1px solid var(--color-border);
 		overflow: hidden;
-		transform: translateY(4px);
+		transform: translateY(-4px);
 	}
 	
 	.menu-item {
@@ -324,6 +334,7 @@
 		align-items: center;
 		font-size: var(--font-size-xs);
 		color: var(--color-text-tertiary);
+		margin-bottom: 24px; /* Added space for the menu button */
 	}
 
 	.due-date {

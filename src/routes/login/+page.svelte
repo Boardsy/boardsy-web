@@ -46,6 +46,9 @@
 <div class="auth-container">
 	<div class="auth-card">
 		<div class="auth-header">
+			<a href="/" class="home-link">
+				<img src="/flowline-banner.png" alt="FlowLine" class="banner" />
+			</a>
 			<h1>Log in to FlowLine</h1>
 			<p>Welcome back! Enter your details to continue.</p>
 		</div>
@@ -106,8 +109,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: calc(100vh - 64px);
+		min-height: 100vh; /* Changed from calc(100vh - 64px) to 100vh */
 		padding: var(--spacing-md);
+		background-color: var(--color-bg);
 	}
 
 	.auth-card {
@@ -122,6 +126,16 @@
 	.auth-header {
 		margin-bottom: var(--spacing-lg);
 		text-align: center;
+	}
+
+	.home-link {
+		display: inline-block;
+		margin-bottom: var(--spacing-md);
+	}
+
+	.banner {
+		width: 200px;
+		height: auto;
 	}
 
 	.auth-header h1 {

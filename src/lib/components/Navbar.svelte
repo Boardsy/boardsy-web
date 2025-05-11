@@ -6,7 +6,12 @@
 
 	let isMobileMenuOpen = false;
 	let userMenuOpen = false;
-	let logoSrc = '/logo.svg';
+	let logoSrc = '/flowline-logo.png';
+	
+	// Check page types
+	$: isHomePage = $page.url.pathname === '/';
+	$: isAuthPage = $page.url.pathname === '/login' || $page.url.pathname === '/register';
+	$: showNavbar = !isHomePage || $isAuthenticated;
 
 	function toggleMobileMenu() {
 		isMobileMenuOpen = !isMobileMenuOpen;
@@ -37,80 +42,91 @@
 	});
 </script>
 
+{#if showNavbar}
 <header class="navbar">
-	<div class="container navbar-container">
-		<div class="navbar-start">
-			<a href="/" class="logo">
-				<img src={logoSrc} alt="FlowLine Logo" width="32" height="32" />
-				<span>FlowLine</span>
-			</a>
-
-			{#if $isAuthenticated}
-				<nav class="desktop-nav">
-					<ul>
-						<li class:active={$page.url.pathname === '/boards'}>
-							<a href="/boards">Boards</a>
-						</li>
-						<li class:active={$page.url.pathname === '/templates'}>
-							<a href="/templates">Templates</a>
-						</li>
-					</ul>
-				</nav>
-			{/if}
+	{#if isAuthPage}
+		<!-- Special centered layout for login/register pages -->
+		<div class="centered-navbar-container">
+			<div class="centered-logo">
+				<a href="/" class="logo">
+					<img src={logoSrc} alt="FlowLine Logo" width="48" height="48" />
+					<span>FlowLine</span>
+				</a>
+			</div>
 		</div>
+	{:else}
+		<!-- Standard layout for all other pages (except homepage) -->
+		<div class="container navbar-container">
+			<div class="navbar-start">
+				<a href="/" class="logo">
+					<img src={logoSrc} alt="FlowLine Logo" width="40" height="40" />
+					<span>FlowLine</span>
+				</a>
 
-		<div class="navbar-end">
-			{#if $isAuthenticated}
-				<button class="btn btn-primary create-btn">
-					<span class="icon">+</span>
-					<span class="create-text">Create</span>
-				</button>
+				{#if $isAuthenticated}
+					<nav class="desktop-nav">
+						<ul>
+							<li class:active={$page.url.pathname === '/boards'}>
+								<a href="/boards">Boards</a>
+							</li>
+						</ul>
+					</nav>
+				{/if}
+			</div>
 
-				<div class="user-dropdown">
-					<button class="user-button" on:click={toggleUserMenu}>
-						{#if $user?.avatarUrl}
-							<img src={$user.avatarUrl} alt="User avatar" class="avatar" />
-						{:else}
-							<div class="avatar-placeholder">
-								{$user?.name?.charAt(0) || $user?.email?.charAt(0)?.toUpperCase() || '?'}
-							</div>
-						{/if}
+			<div class="navbar-end">
+				{#if $isAuthenticated}
+					<button class="btn btn-primary create-btn">
+						<span class="icon">+</span>
+						<span class="create-text">Create</span>
 					</button>
 
-					{#if userMenuOpen}
-						<div class="user-menu">
-							<div class="user-info">
-								<p class="user-name">{$user?.name || 'User'}</p>
-								<p class="user-email">{$user?.email}</p>
-							</div>
-							<ul>
-								<li>
-									<a href="/profile">Profile</a>
-								</li>
-								<li>
-									<a href="/settings">Settings</a>
-								</li>
-								<li>
-									<button on:click={handleSignOut}>Sign out</button>
-								</li>
-							</ul>
-						</div>
-					{/if}
-				</div>
-			{:else}
-				<div class="auth-buttons">
-					<a href="/login" class="btn btn-outlined">Log in</a>
-					<a href="/register" class="btn btn-primary">Sign up</a>
-				</div>
-			{/if}
+					<div class="user-dropdown">
+						<button class="user-button" on:click={toggleUserMenu}>
+							{#if $user?.avatarUrl}
+								<img src={$user.avatarUrl} alt="User avatar" class="avatar" />
+							{:else}
+								<div class="avatar-placeholder">
+									{$user?.name?.charAt(0) || $user?.email?.charAt(0)?.toUpperCase() || '?'}
+								</div>
+							{/if}
+						</button>
 
-			<button class="mobile-menu-button" on:click={toggleMobileMenu} aria-label="Menu">
-				<span class="bar"></span>
-				<span class="bar"></span>
-				<span class="bar"></span>
-			</button>
+						{#if userMenuOpen}
+							<div class="user-menu">
+								<div class="user-info">
+									<p class="user-name">{$user?.name || 'User'}</p>
+									<p class="user-email">{$user?.email}</p>
+								</div>
+								<ul>
+									<li>
+										<a href="/profile">Profile</a>
+									</li>
+									<li>
+										<a href="/settings">Settings</a>
+									</li>
+									<li>
+										<button on:click={handleSignOut}>Sign out</button>
+									</li>
+								</ul>
+							</div>
+						{/if}
+					</div>
+				{:else}
+					<div class="auth-buttons">
+						<a href="/login" class="btn btn-outlined">Log in</a>
+						<a href="/register" class="btn btn-primary">Sign up</a>
+					</div>
+				{/if}
+
+				<button class="mobile-menu-button" on:click={toggleMobileMenu} aria-label="Menu">
+					<span class="bar"></span>
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	{#if isMobileMenuOpen}
 		<div class="mobile-menu">
@@ -119,9 +135,6 @@
 					<ul>
 						<li>
 							<a href="/boards">Boards</a>
-						</li>
-						<li>
-							<a href="/templates">Templates</a>
 						</li>
 						<li>
 							<a href="/profile">Profile</a>
@@ -143,21 +156,52 @@
 		</div>
 	{/if}
 </header>
+{/if}
 
 <style>
 	.navbar {
-		background-color: var(--color-surface);
-		border-bottom: 1px solid var(--color-border);
+		background-color: #0f172a; /* Dark background matching your image */
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		position: sticky;
 		top: 0;
 		z-index: var(--z-sticky);
 	}
 
+	/* Regular navbar styles */
 	.navbar-container {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 64px;
+		height: 80px;
+		max-width: 1280px;
+		margin: 0 auto;
+		padding: 0 var(--spacing-lg);
+	}
+
+	/* Centered navbar styles for login/register pages */
+	.centered-navbar-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100px; /* Shorter since it only has the logo */
+		max-width: 1280px;
+		margin: 0 auto;
+		padding: 0 var(--spacing-lg);
+		position: relative;
+	}
+
+	.centered-logo {
+		text-align: center;
+	}
+
+	.centered-logo .logo {
+		font-size: 1.75rem;
+	}
+
+	.centered-logo .logo img {
+		width: 48px;
+		height: 48px;
 	}
 
 	.navbar-start,
@@ -170,8 +214,8 @@
 		display: flex;
 		align-items: center;
 		font-weight: var(--font-weight-bold);
-		font-size: var(--font-size-lg);
-		color: var(--color-primary);
+		font-size: 1.5rem;
+		color: #3b82f6; /* Bright blue color */
 		margin-right: var(--spacing-xl);
 	}
 
@@ -195,10 +239,11 @@
 		padding: var(--spacing-xs) var(--spacing-sm);
 		border-radius: var(--radius-md);
 		transition: background-color 0.2s;
+		color: #f8fafc;
 	}
 
 	.desktop-nav a:hover {
-		background-color: rgba(0, 0, 0, 0.05);
+		background-color: rgba(255, 255, 255, 0.1);
 	}
 
 	.desktop-nav li.active a {
@@ -220,8 +265,20 @@
 		display: none;
 	}
 
-	.auth-buttons .btn:first-child {
-		margin-right: var(--spacing-sm);
+	.btn-outlined {
+		border: 1px solid #3b82f6;
+		background-color: transparent;
+		color: #3b82f6;
+	}
+
+	.btn-primary {
+		background-color: #3b82f6;
+		color: white;
+	}
+
+	.btn:hover {
+		transform: translateY(-2px);
+		transition: transform 0.2s;
 	}
 
 	.user-dropdown {
@@ -308,19 +365,21 @@
 		justify-content: space-between;
 		width: 24px;
 		height: 20px;
+		margin-left: 16px;
 	}
 
 	.bar {
 		height: 2px;
 		width: 100%;
-		background-color: var(--color-text-primary);
+		background-color: #f8fafc; /* Light color for the bars */
 		border-radius: 2px;
 	}
 
 	.mobile-menu {
 		display: block;
-		border-top: 1px solid var(--color-border);
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
 		padding: var(--spacing-md);
+		background-color: #0f172a; /* Dark background for mobile menu */
 	}
 
 	.mobile-menu ul {
@@ -337,6 +396,7 @@
 		width: 100%;
 		padding: var(--spacing-sm);
 		text-align: left;
+		color: #f8fafc; /* Light text for mobile menu */
 	}
 
 	.mobile-auth-buttons {
@@ -348,6 +408,7 @@
 	.mobile-auth-buttons .btn {
 		width: 100%;
 		text-align: center;
+		padding: 12px;
 	}
 
 	@media (min-width: 768px) {
@@ -365,10 +426,43 @@
 
 		.auth-buttons {
 			display: flex;
+			gap: 12px;
+		}
+		
+		.auth-buttons .btn {
+			padding: 10px 20px;
 		}
 	}
 
 	@media (max-width: 640px) {
+		.navbar-container {
+			height: 70px;
+			padding: 0 var(--spacing-md);
+		}
+		
+		.centered-navbar-container {
+			height: 80px;
+			padding: 16px var(--spacing-md);
+		}
+		
+		.logo {
+			font-size: 1.25rem;
+		}
+		
+		.logo img {
+			width: 32px;
+			height: 32px;
+		}
+		
+		.centered-logo .logo {
+			font-size: 1.5rem;
+		}
+		
+		.centered-logo .logo img {
+			width: 40px;
+			height: 40px;
+		}
+		
 		.create-text {
 			display: none;
 		}

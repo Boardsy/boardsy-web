@@ -7,11 +7,15 @@
 	import BoardCard from '$lib/components/BoardCard.svelte';
 	import CreateBoardModal from '$lib/components/CreateBoardModal.svelte';
 	import BoardDeleteModal from '$lib/components/BoardDeleteModal.svelte';
+	import EditBoardModal from '$lib/components/EditBoardModal.svelte';
+	import type { Board } from '$lib/types/models';
 
 	let isLoading = true;
 	let showCreateModal = false;
 	let showDeleteModal = false;
+	let showEditModal = false;
 	let boardToDelete = { id: '', title: '' };
+	let boardToEdit: Board | null = null;
 	let isDeleting = false;
 	let deleteError = '';
 
@@ -32,6 +36,7 @@
 
 	function handleCloseModal() {
 		showCreateModal = false;
+		showEditModal = false;
 	}
 
 	async function handleBoardCreated(event: CustomEvent<{ id: string }>) {
@@ -42,6 +47,21 @@
 	function handleDeleteBoard(event: CustomEvent<{ id: string, title: string }>) {
 		boardToDelete = event.detail;
 		showDeleteModal = true;
+	}
+	
+	function handleEditBoard(event: CustomEvent<Board>) {
+		boardToEdit = event.detail;
+		showEditModal = true;
+	}
+	
+	async function handleBoardUpdated() {
+		showEditModal = false;
+		
+		if ($user) {
+			await fetchUserBoards($user.id);
+		}
+		
+		boardToEdit = null;
 	}
 	
 	async function confirmDeleteBoard() {
@@ -108,8 +128,12 @@
 					</button>
 				</div>
 			{:else}
-				{#each $boards as board}
-					<BoardCard {board} on:deleteBoard={handleDeleteBoard} />
+				{#each $boards as board (board.id)}
+					<BoardCard 
+						{board} 
+						on:deleteBoard={handleDeleteBoard}
+						on:editBoard={handleEditBoard}
+					/>
 				{/each}
 				<div class="board-card create-board-card" on:click={handleCreateBoard}>
 					<div class="create-board-content">
@@ -131,6 +155,14 @@
 		boardName={boardToDelete.title}
 		on:close={() => showDeleteModal = false}
 		on:confirm={confirmDeleteBoard}
+	/>
+{/if}
+
+{#if showEditModal && boardToEdit}
+	<EditBoardModal 
+		board={boardToEdit}
+		on:close={handleCloseModal}
+		on:boardUpdated={handleBoardUpdated}
 	/>
 {/if}
 

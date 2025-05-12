@@ -387,6 +387,64 @@ export const updateCard = async (cardId: string, updates: { title?: string; desc
 	}
 };
 
+export const updateBoard = async (
+  boardId: string,
+  updates: { title?: string; description?: string | null | undefined; backgroundColor?: string }
+) => {
+  isLoading.set(true);
+  error.set(null);
+
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+    
+    if (updates.title !== undefined) {
+      updateData.title = updates.title;
+    }
+    
+    if (updates.backgroundColor !== undefined) {
+      updateData.background_color = updates.backgroundColor;
+    }
+    
+    if ('description' in updates) {
+      updateData.description = updates.description || null;
+    }
+    
+    const { error: updateError } = await supabase
+      .from('boards')
+      .update(updateData)
+      .eq('id', boardId);
+
+    if (updateError) {
+      throw updateError;
+    }
+
+    await fetchUserBoards(userId);
+    
+    const currentBoardValue = get(currentBoard);
+    if (currentBoardValue && currentBoardValue.id === boardId) {
+      await fetchBoardDetails(boardId);
+    }
+    
+    return true;
+
+  } catch (err) {
+    console.error('Error updating board:', err);
+    error.set('Failed to update board');
+    throw err;
+  } finally {
+    isLoading.set(false);
+  }
+};
+
 export const deleteCard = async (cardId: string, columnId: string) => {
 	isLoading.set(true);
 	error.set(null);

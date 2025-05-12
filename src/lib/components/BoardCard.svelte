@@ -8,11 +8,12 @@
 
 	const dispatch = createEventDispatcher<{
 		deleteBoard: { id: string; title: string };
+		editBoard: Board;
 	}>();
 
 	function navigateToBoard(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.closest('.delete-button')) {
+		if (target.closest('.board-action-button')) {
 			event.preventDefault();
 			event.stopPropagation();
 			return;
@@ -25,9 +26,16 @@
 		event.stopPropagation();
 		dispatch('deleteBoard', { id: board.id, title: board.title });
 	}
+	
+	function handleEditClick(event: MouseEvent) {
+		event.stopPropagation();
+		dispatch('editBoard', board);
+	}
 
 	function getInitialColors() {
-		if (board.backgroundColor) return board.backgroundColor;
+		if (board.backgroundColor && board.backgroundColor.trim() !== '') {
+			return board.backgroundColor;
+		}
 
 		const colors = [
 			'#3B82F6', // Blue
@@ -42,8 +50,11 @@
 		return colors[index];
 	}
 
-	$: cardStyle = `background-color: ${getInitialColors()};`;
-	$: timeAgo = formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true });
+	$: backgroundColor = getInitialColors();
+	$: cardStyle = `background-color: ${backgroundColor};`;
+	
+	$: updatedAtDate = new Date(board.updatedAt instanceof Date ? board.updatedAt.getTime() : board.updatedAt);
+	$: timeAgo = formatDistanceToNow(updatedAtDate, { addSuffix: true });
 </script>
 
 <div class="board-card" style={cardStyle} on:click={navigateToBoard}>
@@ -55,9 +66,14 @@
 	</div>
 	<div class="board-card-footer">
 		<span class="board-updated">Updated {timeAgo}</span>
-		<button class="delete-button" on:click={handleDeleteClick} aria-label="Delete board">
-			<span class="delete-icon">🗑️</span>
-		</button>
+		<div class="board-actions">
+			<button class="board-action-button" on:click={handleEditClick} aria-label="Edit board">
+				<span class="action-icon">✏️</span>
+			</button>
+			<button class="board-action-button" on:click={handleDeleteClick} aria-label="Delete board">
+				<span class="action-icon">🗑️</span>
+			</button>
+		</div>
 	</div>
 </div>
 
@@ -127,7 +143,12 @@
 		opacity: 0.8;
 	}
 	
-	.delete-button {
+	.board-actions {
+		display: flex;
+		gap: 6px;
+	}
+	
+	.board-action-button {
 		background: none;
 		border: none;
 		color: white;
@@ -138,12 +159,12 @@
 		transition: all 0.2s;
 	}
 	
-	.delete-button:hover {
+	.board-action-button:hover {
 		opacity: 1;
 		background-color: rgba(255, 255, 255, 0.1);
 	}
 	
-	.delete-icon {
+	.action-icon {
 		font-size: 16px;
 	}
 </style>

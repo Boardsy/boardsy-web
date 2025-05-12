@@ -13,7 +13,7 @@
 <div class="welcome-container">
 	<div class="welcome-content">
 		<div class="logo-section">
-			<img src="/flowline-banner.png" alt="FlowLine" class="banner" />
+			<img src="https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/flowline-banner.png" alt="FlowLine" class="banner" />
 			<p class="tagline">Organize your work. Boost your productivity.</p>
 		</div>
 		

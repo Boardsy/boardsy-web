@@ -6,7 +6,7 @@
 
 	let isMobileMenuOpen = false;
 	let userMenuOpen = false;
-	let logoSrc = '/flowline-logo.png';
+	let logoSrc = 'https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/flowline-logo.png';
 	
 	$: isHomePage = $page.url.pathname === '/';
 	$: isAuthPage = $page.url.pathname === '/login' || $page.url.pathname === '/register';

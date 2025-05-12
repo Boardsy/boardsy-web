@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { createBoard } from '$lib/stores/boardStore';
+	import { updateBoard } from '$lib/stores/boardStore';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import type { Board } from '$lib/types/models';
+
+	export let board: Board;
 
 	const dispatch = createEventDispatcher<{
 		close: void;
-		boardCreated: { id: string };
+		boardUpdated: { id: string };
 	}>();
 
-	let title = '';
-	let description = '';
-	let selectedColor = '#3B82F6'; // Default to blue
-	let isCreating = false;
+	let title = board.title;
+	let description = board.description || '';
+	let selectedColor = board.backgroundColor || '#3B82F6'; // Default to blue if no color
+	let isUpdating = false;
 	let errorMessage = '';
 	let colorPickerInput: HTMLInputElement;
 
@@ -40,22 +43,22 @@
 			return;
 		}
 
-		isCreating = true;
+		isUpdating = true;
 		errorMessage = '';
 
 		try {
-			const boardId = await createBoard(title, description, selectedColor);
+			await updateBoard(board.id, {
+				title,
+				description: description || undefined,
+				backgroundColor: selectedColor
+			});
 
-			if (boardId) {
-				dispatch('boardCreated', { id: boardId });
-			} else {
-				errorMessage = 'Failed to create board';
-			}
+			dispatch('boardUpdated', { id: board.id });
 		} catch (error) {
-			console.error('Error creating board:', error);
+			console.error('Error updating board:', error);
 			errorMessage = 'An unexpected error occurred';
 		} finally {
-			isCreating = false;
+			isUpdating = false;
 		}
 	}
 </script>
@@ -63,7 +66,7 @@
 <div class="modal-backdrop" on:click={close}>
 	<div class="modal-content" on:click|stopPropagation>
 		<div class="modal-header">
-			<h2>Create new board</h2>
+			<h2>Edit board</h2>
 			<button class="close-button" on:click={close} aria-label="Close"> &times; </button>
 		</div>
 
@@ -82,7 +85,7 @@
 					bind:value={title}
 					class="form-input"
 					placeholder="Enter board title"
-					disabled={isCreating}
+					disabled={isUpdating}
 					required
 				/>
 			</div>
@@ -95,7 +98,7 @@
 					class="form-input"
 					placeholder="Add a description"
 					rows="3"
-					disabled={isCreating}
+					disabled={isUpdating}
 				></textarea>
 			</div>
 
@@ -118,7 +121,7 @@
 							class:selected={selectedColor === color.value}
 							style={`background-color: ${color.value};`}
 							on:click={() => (selectedColor = color.value)}
-							disabled={isCreating}
+							disabled={isUpdating}
 							aria-label={`Select ${color.name}`}
 						></button>
 					{/each}
@@ -152,14 +155,14 @@
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-outlined" on:click={close} disabled={isCreating}>
+				<button type="button" class="btn btn-outlined" on:click={close} disabled={isUpdating}>
 					Cancel
 				</button>
-				<button type="submit" class="btn btn-primary" disabled={isCreating}>
-					{#if isCreating}
+				<button type="submit" class="btn btn-primary" disabled={isUpdating}>
+					{#if isUpdating}
 						<Spinner size="small" color="white" />
 					{:else}
-						Create
+						Save Changes
 					{/if}
 				</button>
 			</div>

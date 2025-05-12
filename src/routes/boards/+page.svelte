@@ -2,13 +2,18 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { isAuthenticated, user } from '$lib/stores/userStore';
-	import { boards, fetchUserBoards, createBoard } from '$lib/stores/boardStore';
+	import { boards, fetchUserBoards, createBoard, deleteBoard } from '$lib/stores/boardStore';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import BoardCard from '$lib/components/BoardCard.svelte';
 	import CreateBoardModal from '$lib/components/CreateBoardModal.svelte';
+	import BoardDeleteModal from '$lib/components/BoardDeleteModal.svelte';
 
 	let isLoading = true;
 	let showCreateModal = false;
+	let showDeleteModal = false;
+	let boardToDelete = { id: '', title: '' };
+	let isDeleting = false;
+	let deleteError = '';
 
 	$: if (!$isAuthenticated && !isLoading) {
 		goto('/login');
@@ -32,6 +37,29 @@
 	async function handleBoardCreated(event: CustomEvent<{ id: string }>) {
 		showCreateModal = false;
 		goto(`/boards/${event.detail.id}`);
+	}
+	
+	function handleDeleteBoard(event: CustomEvent<{ id: string, title: string }>) {
+		boardToDelete = event.detail;
+		showDeleteModal = true;
+	}
+	
+	async function confirmDeleteBoard() {
+		isDeleting = true;
+		deleteError = '';
+		
+		try {
+			await deleteBoard(boardToDelete.id);
+			showDeleteModal = false;
+			if ($user) {
+				await fetchUserBoards($user.id);
+			}
+		} catch (error) {
+			console.error('Error deleting board:', error);
+			deleteError = 'Failed to delete board. Please try again.';
+		} finally {
+			isDeleting = false;
+		}
 	}
 </script>
 
@@ -81,7 +109,7 @@
 				</div>
 			{:else}
 				{#each $boards as board}
-					<BoardCard {board} />
+					<BoardCard {board} on:deleteBoard={handleDeleteBoard} />
 				{/each}
 				<div class="board-card create-board-card" on:click={handleCreateBoard}>
 					<div class="create-board-content">
@@ -96,6 +124,14 @@
 
 {#if showCreateModal}
 	<CreateBoardModal on:close={handleCloseModal} on:boardCreated={handleBoardCreated} />
+{/if}
+
+{#if showDeleteModal}
+	<BoardDeleteModal 
+		boardName={boardToDelete.title}
+		on:close={() => showDeleteModal = false}
+		on:confirm={confirmDeleteBoard}
+	/>
 {/if}
 
 <style>

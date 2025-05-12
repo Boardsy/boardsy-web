@@ -1,12 +1,29 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { goto } from '$app/navigation';
 	import type { Board } from '$lib/types/models';
 	import { formatDistanceToNow } from 'date-fns';
 
 	export let board: Board;
 
-	function navigateToBoard() {
+	const dispatch = createEventDispatcher<{
+		deleteBoard: { id: string; title: string };
+	}>();
+
+	function navigateToBoard(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (target.closest('.delete-button')) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
+		
 		goto(`/boards/${board.id}`);
+	}
+
+	function handleDeleteClick(event: MouseEvent) {
+		event.stopPropagation();
+		dispatch('deleteBoard', { id: board.id, title: board.title });
 	}
 
 	function getInitialColors() {
@@ -38,6 +55,9 @@
 	</div>
 	<div class="board-card-footer">
 		<span class="board-updated">Updated {timeAgo}</span>
+		<button class="delete-button" on:click={handleDeleteClick} aria-label="Delete board">
+			<span class="delete-icon">🗑️</span>
+		</button>
 	</div>
 </div>
 
@@ -97,10 +117,33 @@
 		padding: var(--spacing-sm) var(--spacing-md);
 		background-color: rgba(0, 0, 0, 0.2);
 		position: relative;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.board-updated {
 		font-size: var(--font-size-xs);
 		opacity: 0.8;
+	}
+	
+	.delete-button {
+		background: none;
+		border: none;
+		color: white;
+		opacity: 0.7;
+		cursor: pointer;
+		padding: 4px;
+		border-radius: 4px;
+		transition: all 0.2s;
+	}
+	
+	.delete-button:hover {
+		opacity: 1;
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+	
+	.delete-icon {
+		font-size: 16px;
 	}
 </style>

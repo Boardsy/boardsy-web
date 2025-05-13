@@ -27,7 +27,7 @@
 	function close() {
 		dispatch('close');
 	}
-	
+
 	function openColorPicker() {
 		if (colorPickerInput) {
 			colorPickerInput.click();
@@ -101,15 +101,15 @@
 
 			<div class="form-group">
 				<label class="form-label">Background color</label>
-				
+
 				<!-- Hidden color input that's controlled via the rainbow button -->
-				<input 
-					type="color" 
+				<input
+					type="color"
 					bind:value={selectedColor}
 					bind:this={colorPickerInput}
 					class="hidden-color-input"
 				/>
-				
+
 				<div class="color-options">
 					{#each predefinedColors as color}
 						<button
@@ -122,7 +122,7 @@
 							aria-label={`Select ${color.name}`}
 						></button>
 					{/each}
-					
+
 					<!-- Rainbow color picker button -->
 					<button
 						type="button"
@@ -132,7 +132,7 @@
 						title="Choose custom color"
 					></button>
 				</div>
-				
+
 				<!-- Show the current color value -->
 				<div class="color-value-display">
 					Current color: <span class="color-code">{selectedColor}</span>
@@ -251,14 +251,21 @@
 		border-color: var(--color-text-primary);
 		transform: scale(1.1);
 	}
-	
+
 	.rainbow-option {
-		background: linear-gradient(to right, 
-			#FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #9400D3
+		background: linear-gradient(
+			to right,
+			#ff0000,
+			#ff7f00,
+			#ffff00,
+			#00ff00,
+			#0000ff,
+			#4b0082,
+			#9400d3
 		);
 		position: relative;
 	}
-	
+
 	.rainbow-option::after {
 		content: '+';
 		position: absolute;
@@ -269,7 +276,7 @@
 		text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 		font-weight: bold;
 	}
-	
+
 	.hidden-color-input {
 		position: absolute;
 		opacity: 0;
@@ -277,13 +284,13 @@
 		height: 0;
 		pointer-events: none;
 	}
-	
+
 	.color-value-display {
 		margin-top: var(--spacing-xs);
 		font-size: var(--font-size-sm);
 		color: var(--color-text-secondary);
 	}
-	
+
 	.color-code {
 		font-family: monospace;
 		font-weight: var(--font-weight-medium);

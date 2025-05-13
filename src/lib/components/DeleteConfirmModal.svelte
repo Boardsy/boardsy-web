@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	
+
 	export let title = 'Confirm Deletion';
 	export let message = 'Are you sure you want to delete this item?';
 	export let confirmText = 'Delete';
-	
+
 	const dispatch = createEventDispatcher();
-	
+
 	function handleConfirm() {
 		dispatch('confirm');
 	}
-	
+
 	function handleCancel() {
 		dispatch('cancel');
 	}
@@ -20,19 +20,15 @@
 	<div class="modal-content" on:click|stopPropagation>
 		<div class="modal-header">
 			<h2>{title}</h2>
-			<button class="close-button" on:click={handleCancel} aria-label="Close">
-				&times;
-			</button>
+			<button class="close-button" on:click={handleCancel} aria-label="Close"> &times; </button>
 		</div>
-		
+
 		<div class="modal-body">
 			<p>{message}</p>
 		</div>
-		
+
 		<div class="modal-footer">
-			<button class="btn btn-outlined" on:click={handleCancel}>
-				Cancel
-			</button>
+			<button class="btn btn-outlined" on:click={handleCancel}> Cancel </button>
 			<button class="btn btn-danger" on:click={handleConfirm}>
 				{confirmText}
 			</button>
@@ -87,11 +83,11 @@
 		cursor: pointer;
 		color: var(--color-text-secondary);
 	}
-	
+
 	.modal-body {
 		padding: var(--spacing-lg);
 	}
-	
+
 	.modal-body p {
 		margin: 0;
 		color: var(--color-text-secondary);
@@ -104,12 +100,12 @@
 		padding: var(--spacing-md) var(--spacing-lg);
 		border-top: 1px solid var(--color-border);
 	}
-	
+
 	.btn-danger {
 		background-color: var(--color-error);
 		color: white;
 	}
-	
+
 	.btn-danger:hover {
 		background-color: #dc2626; /* Darker red */
 	}

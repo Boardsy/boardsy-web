@@ -285,10 +285,7 @@ export const deleteBoard = async (boardId: string) => {
 			throw new Error('You do not have permission to delete this board');
 		}
 
-		const { error: deleteError } = await supabase
-			.from('boards')
-			.delete()
-			.eq('id', boardId);
+		const { error: deleteError } = await supabase.from('boards').delete().eq('id', boardId);
 
 		if (deleteError) {
 			throw deleteError;
@@ -297,9 +294,8 @@ export const deleteBoard = async (boardId: string) => {
 		boards.update((currentBoards) => {
 			return currentBoards.filter((board) => board.id !== boardId);
 		});
-		
-		currentBoard.set(null);
 
+		currentBoard.set(null);
 	} catch (err) {
 		console.error('Error deleting board:', err);
 		error.set('Failed to delete board');
@@ -362,15 +358,15 @@ export const createCard = async (columnId: string, title: string, description?: 
 	}
 };
 
-export const updateCard = async (cardId: string, updates: { title?: string; description?: string | null }) => {
+export const updateCard = async (
+	cardId: string,
+	updates: { title?: string; description?: string | null }
+) => {
 	isLoading.set(true);
 	error.set(null);
 
 	try {
-		const { error: updateError } = await supabase
-			.from('cards')
-			.update(updates)
-			.eq('id', cardId);
+		const { error: updateError } = await supabase.from('cards').update(updates).eq('id', cardId);
 
 		if (updateError) throw updateError;
 
@@ -388,61 +384,60 @@ export const updateCard = async (cardId: string, updates: { title?: string; desc
 };
 
 export const updateBoard = async (
-  boardId: string,
-  updates: { title?: string; description?: string | null | undefined; backgroundColor?: string }
+	boardId: string,
+	updates: { title?: string; description?: string | null | undefined; backgroundColor?: string }
 ) => {
-  isLoading.set(true);
-  error.set(null);
+	isLoading.set(true);
+	error.set(null);
 
-  try {
-    const { data: userData } = await supabase.auth.getUser();
-    const userId = userData.user?.id;
+	try {
+		const { data: userData } = await supabase.auth.getUser();
+		const userId = userData.user?.id;
 
-    if (!userId) {
-      throw new Error('User not authenticated');
-    }
+		if (!userId) {
+			throw new Error('User not authenticated');
+		}
 
-    const updateData: any = {
-      updated_at: new Date().toISOString()
-    };
-    
-    if (updates.title !== undefined) {
-      updateData.title = updates.title;
-    }
-    
-    if (updates.backgroundColor !== undefined) {
-      updateData.background_color = updates.backgroundColor;
-    }
-    
-    if ('description' in updates) {
-      updateData.description = updates.description || null;
-    }
-    
-    const { error: updateError } = await supabase
-      .from('boards')
-      .update(updateData)
-      .eq('id', boardId);
+		const updateData: any = {
+			updated_at: new Date().toISOString()
+		};
 
-    if (updateError) {
-      throw updateError;
-    }
+		if (updates.title !== undefined) {
+			updateData.title = updates.title;
+		}
 
-    await fetchUserBoards(userId);
-    
-    const currentBoardValue = get(currentBoard);
-    if (currentBoardValue && currentBoardValue.id === boardId) {
-      await fetchBoardDetails(boardId);
-    }
-    
-    return true;
+		if (updates.backgroundColor !== undefined) {
+			updateData.background_color = updates.backgroundColor;
+		}
 
-  } catch (err) {
-    console.error('Error updating board:', err);
-    error.set('Failed to update board');
-    throw err;
-  } finally {
-    isLoading.set(false);
-  }
+		if ('description' in updates) {
+			updateData.description = updates.description || null;
+		}
+
+		const { error: updateError } = await supabase
+			.from('boards')
+			.update(updateData)
+			.eq('id', boardId);
+
+		if (updateError) {
+			throw updateError;
+		}
+
+		await fetchUserBoards(userId);
+
+		const currentBoardValue = get(currentBoard);
+		if (currentBoardValue && currentBoardValue.id === boardId) {
+			await fetchBoardDetails(boardId);
+		}
+
+		return true;
+	} catch (err) {
+		console.error('Error updating board:', err);
+		error.set('Failed to update board');
+		throw err;
+	} finally {
+		isLoading.set(false);
+	}
 };
 
 export const deleteCard = async (cardId: string, columnId: string) => {
@@ -450,10 +445,7 @@ export const deleteCard = async (cardId: string, columnId: string) => {
 	error.set(null);
 
 	try {
-		const { error: deleteError } = await supabase
-			.from('cards')
-			.delete()
-			.eq('id', cardId);
+		const { error: deleteError } = await supabase.from('cards').delete().eq('id', cardId);
 
 		if (deleteError) throw deleteError;
 
@@ -528,10 +520,7 @@ export const deleteColumn = async (columnId: string) => {
 	error.set(null);
 
 	try {
-		const { error: deleteError } = await supabase
-			.from('columns')
-			.delete()
-			.eq('id', columnId);
+		const { error: deleteError } = await supabase.from('columns').delete().eq('id', columnId);
 
 		if (deleteError) throw deleteError;
 

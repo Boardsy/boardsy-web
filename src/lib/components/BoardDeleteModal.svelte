@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	
+
 	export let boardName: string;
-	
+
 	const dispatch = createEventDispatcher<{
 		close: void;
 		confirm: void;
@@ -26,16 +26,15 @@
 
 		<div class="modal-body">
 			<p>Are you sure you want to delete <strong>{boardName}</strong>?</p>
-			<p class="warning">This action cannot be undone. All columns and cards associated with this board will be permanently deleted.</p>
+			<p class="warning">
+				This action cannot be undone. All columns and cards associated with this board will be
+				permanently deleted.
+			</p>
 		</div>
 
 		<div class="modal-footer">
-			<button type="button" class="btn btn-outlined" on:click={close}>
-				Cancel
-			</button>
-			<button type="button" class="btn btn-danger" on:click={confirm}>
-				Delete Board
-			</button>
+			<button type="button" class="btn btn-outlined" on:click={close}> Cancel </button>
+			<button type="button" class="btn btn-danger" on:click={confirm}> Delete Board </button>
 		</div>
 	</div>
 </div>

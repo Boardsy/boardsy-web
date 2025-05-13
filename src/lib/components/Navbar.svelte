@@ -6,8 +6,9 @@
 
 	let isMobileMenuOpen = false;
 	let userMenuOpen = false;
-	let logoSrc = 'https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/boardsy-logo.png';
-	
+	let logoSrc =
+		'https://raw.githubusercontent.com/Boardsy/boardsy-web/refs/heads/main/static/boardsy-logo.png';
+
 	$: isHomePage = $page.url.pathname === '/';
 	$: isAuthPage = $page.url.pathname === '/login' || $page.url.pathname === '/register';
 	$: showNavbar = !isHomePage || $isAuthenticated;
@@ -42,113 +43,112 @@
 </script>
 
 {#if showNavbar}
-<header class="navbar">
-	{#if isAuthPage}
-		<div class="centered-navbar-container">
-			<div class="centered-logo">
-				<a href="/" class="logo">
-					<img src={logoSrc} alt="Boardsy Logo" width="48" height="48" />
-					<span>Boardsy</span>
-				</a>
+	<header class="navbar">
+		{#if isAuthPage}
+			<div class="centered-navbar-container">
+				<div class="centered-logo">
+					<a href="/" class="logo">
+						<img src={logoSrc} alt="Boardsy Logo" width="48" height="48" />
+						<span>Boardsy</span>
+					</a>
+				</div>
 			</div>
-		</div>
-	{:else}
-		<div class="container navbar-container">
-			<div class="navbar-start">
-				<a href="/" class="logo">
-					<img src={logoSrc} alt="Boardsy Logo" width="40" height="40" />
-					<span>Boardsy</span>
-				</a>
+		{:else}
+			<div class="container navbar-container">
+				<div class="navbar-start">
+					<a href="/" class="logo">
+						<img src={logoSrc} alt="Boardsy Logo" width="40" height="40" />
+						<span>Boardsy</span>
+					</a>
 
+					{#if $isAuthenticated}
+						<nav class="desktop-nav">
+							<ul>
+								<li class:active={$page.url.pathname === '/boards'}>
+									<a href="/boards">Boards</a>
+								</li>
+							</ul>
+						</nav>
+					{/if}
+				</div>
+
+				<div class="navbar-end">
+					{#if $isAuthenticated}
+						<div class="user-dropdown">
+							<button class="user-button" on:click={toggleUserMenu}>
+								{#if $user?.avatarUrl}
+									<img src={$user.avatarUrl} alt="User avatar" class="avatar" />
+								{:else}
+									<div class="avatar-placeholder">
+										{$user?.name?.charAt(0) || $user?.email?.charAt(0)?.toUpperCase() || '?'}
+									</div>
+								{/if}
+							</button>
+
+							{#if userMenuOpen}
+								<div class="user-menu">
+									<div class="user-info">
+										<p class="user-name">{$user?.name || 'User'}</p>
+										<p class="user-email">{$user?.email}</p>
+									</div>
+									<ul>
+										<li>
+											<a href="/profile">Profile</a>
+										</li>
+										<li>
+											<a href="/settings">Settings</a>
+										</li>
+										<li>
+											<button on:click={handleSignOut}>Sign out</button>
+										</li>
+									</ul>
+								</div>
+							{/if}
+						</div>
+					{:else}
+						<div class="auth-buttons">
+							<a href="/login" class="btn btn-outlined">Log in</a>
+							<a href="/register" class="btn btn-primary">Sign up</a>
+						</div>
+					{/if}
+
+					<button class="mobile-menu-button" on:click={toggleMobileMenu} aria-label="Menu">
+						<span class="bar"></span>
+						<span class="bar"></span>
+						<span class="bar"></span>
+					</button>
+				</div>
+			</div>
+		{/if}
+
+		{#if isMobileMenuOpen}
+			<div class="mobile-menu">
 				{#if $isAuthenticated}
-					<nav class="desktop-nav">
+					<nav>
 						<ul>
-							<li class:active={$page.url.pathname === '/boards'}>
+							<li>
 								<a href="/boards">Boards</a>
+							</li>
+							<li>
+								<a href="/profile">Profile</a>
+							</li>
+							<li>
+								<a href="/settings">Settings</a>
+							</li>
+							<li>
+								<button on:click={handleSignOut}>Sign out</button>
 							</li>
 						</ul>
 					</nav>
-				{/if}
-			</div>
-
-			<div class="navbar-end">
-				{#if $isAuthenticated}
-
-					<div class="user-dropdown">
-						<button class="user-button" on:click={toggleUserMenu}>
-							{#if $user?.avatarUrl}
-								<img src={$user.avatarUrl} alt="User avatar" class="avatar" />
-							{:else}
-								<div class="avatar-placeholder">
-									{$user?.name?.charAt(0) || $user?.email?.charAt(0)?.toUpperCase() || '?'}
-								</div>
-							{/if}
-						</button>
-
-						{#if userMenuOpen}
-							<div class="user-menu">
-								<div class="user-info">
-									<p class="user-name">{$user?.name || 'User'}</p>
-									<p class="user-email">{$user?.email}</p>
-								</div>
-								<ul>
-									<li>
-										<a href="/profile">Profile</a>
-									</li>
-									<li>
-										<a href="/settings">Settings</a>
-									</li>
-									<li>
-										<button on:click={handleSignOut}>Sign out</button>
-									</li>
-								</ul>
-							</div>
-						{/if}
-					</div>
 				{:else}
-					<div class="auth-buttons">
+					<div class="mobile-auth-buttons">
 						<a href="/login" class="btn btn-outlined">Log in</a>
 						<a href="/register" class="btn btn-primary">Sign up</a>
 					</div>
 				{/if}
-
-				<button class="mobile-menu-button" on:click={toggleMobileMenu} aria-label="Menu">
-					<span class="bar"></span>
-					<span class="bar"></span>
-					<span class="bar"></span>
-				</button>
 			</div>
-		</div>
-	{/if}
-
-	{#if isMobileMenuOpen}
-		<div class="mobile-menu">
-			{#if $isAuthenticated}
-				<nav>
-					<ul>
-						<li>
-							<a href="/boards">Boards</a>
-						</li>
-						<li>
-							<a href="/profile">Profile</a>
-						</li>
-						<li>
-							<a href="/settings">Settings</a>
-						</li>
-						<li>
-							<button on:click={handleSignOut}>Sign out</button>
-						</li>
-					</ul>
-				</nav>
-			{:else}
-				<div class="mobile-auth-buttons">
-					<a href="/login" class="btn btn-outlined">Log in</a>
-					<a href="/register" class="btn btn-primary">Sign up</a>
-				</div>
-			{/if}
-		</div>
-	{/if}
-</header>
+		{/if}
+	</header>
 {/if}
 
 <style>
@@ -159,7 +159,7 @@
 		top: 0;
 		z-index: var(--z-sticky);
 	}
-	
+
 	.navbar-container {
 		display: flex;
 		align-items: center;
@@ -405,7 +405,7 @@
 			display: flex;
 			gap: 12px;
 		}
-		
+
 		.auth-buttons .btn {
 			padding: 10px 20px;
 		}
@@ -416,25 +416,25 @@
 			height: 70px;
 			padding: 0 var(--spacing-md);
 		}
-		
+
 		.centered-navbar-container {
 			height: 80px;
 			padding: 16px var(--spacing-md);
 		}
-		
+
 		.logo {
 			font-size: 1.25rem;
 		}
-		
+
 		.logo img {
 			width: 32px;
 			height: 32px;
 		}
-		
+
 		.centered-logo .logo {
 			font-size: 1.5rem;
 		}
-		
+
 		.centered-logo .logo img {
 			width: 40px;
 			height: 40px;

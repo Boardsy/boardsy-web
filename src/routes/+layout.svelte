@@ -15,20 +15,20 @@
 	onMount(() => {
 		const initialize = async () => {
 			await initUserStore();
-			
+
 			initTheme();
-			
+
 			const cleanup = setupThemeListener();
-			
+
 			appLoading = false;
-			
+
 			return cleanup;
 		};
 
 		initialize();
 
 		return () => {
-			initialize().then(cleanup => cleanup());
+			initialize().then((cleanup) => cleanup());
 		};
 	});
 </script>
@@ -58,7 +58,7 @@
 		flex: 1;
 		overflow: auto;
 	}
-	
+
 	.full-height {
 		height: 100vh;
 	}

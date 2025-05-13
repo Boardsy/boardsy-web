@@ -63,7 +63,7 @@
 			toggleAddCard();
 		}
 	}
-	
+
 	function startEditTitle() {
 		editedTitle = column.title;
 		isEditingTitle = true;
@@ -72,7 +72,7 @@
 			if (titleInput) titleInput.focus();
 		}, 0);
 	}
-	
+
 	async function saveColumnTitle() {
 		if (editedTitle.trim() && editedTitle !== column.title) {
 			try {
@@ -86,12 +86,12 @@
 		}
 		isEditingTitle = false;
 	}
-	
+
 	function cancelEditTitle() {
 		editedTitle = column.title;
 		isEditingTitle = false;
 	}
-	
+
 	function handleTitleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -113,11 +113,11 @@
 		const cardIds = newItems.map((item) => item.id);
 		dispatch('cardReorder', { columnId: column.id, cardIds });
 	}
-	
+
 	function confirmDeleteColumn() {
 		showDeleteModal = true;
 	}
-	
+
 	async function handleDeleteColumn() {
 		try {
 			await deleteColumn(column.id);
@@ -135,10 +135,10 @@
 	<div class="column-header">
 		{#if isEditingTitle}
 			<div class="title-edit">
-				<input 
-					id="column-title-{column.id}" 
-					type="text" 
-					bind:value={editedTitle} 
+				<input
+					id="column-title-{column.id}"
+					type="text"
+					bind:value={editedTitle}
 					on:blur={saveColumnTitle}
 					on:keydown={handleTitleKeyPress}
 					class="title-input"
@@ -152,7 +152,7 @@
 				</button>
 			</div>
 		{/if}
-		
+
 		<div class="header-actions">
 			<span class="column-count">{column.cards.length}</span>
 			<button class="delete-button" on:click={confirmDeleteColumn} aria-label="Delete column">
@@ -194,12 +194,7 @@
 				></textarea>
 
 				<div class="form-actions">
-					<button
-						type="button"
-						class="btn primary"
-						on:click={handleAddCard}
-						disabled={isTyping}
-					>
+					<button type="button" class="btn primary" on:click={handleAddCard} disabled={isTyping}>
 						Add Card
 					</button>
 					<button
@@ -227,12 +222,12 @@
 
 <!-- Delete Confirmation Modal -->
 {#if showDeleteModal}
-	<DeleteConfirmModal 
-		title="Delete Column" 
+	<DeleteConfirmModal
+		title="Delete Column"
 		message="Are you sure you want to delete this column? All cards within this column will be permanently deleted."
 		confirmText="Delete Column"
 		on:confirm={handleDeleteColumn}
-		on:cancel={() => showDeleteModal = false}
+		on:cancel={() => (showDeleteModal = false)}
 	/>
 {/if}
 
@@ -347,7 +342,8 @@
 		}
 	}
 
-	.edit-button, .delete-button {
+	.edit-button,
+	.delete-button {
 		background: none;
 		border: none;
 		cursor: pointer;
@@ -366,14 +362,14 @@
 		opacity: 0.6;
 	}
 
-	.edit-button:hover, 
+	.edit-button:hover,
 	.delete-button:hover {
 		opacity: 1;
 		background-color: rgba(0, 0, 0, 0.05);
 	}
 
 	@media (prefers-color-scheme: dark) {
-		.edit-button:hover, 
+		.edit-button:hover,
 		.delete-button:hover {
 			background-color: rgba(255, 255, 255, 0.1);
 		}
@@ -388,7 +384,7 @@
 		max-height: calc(100vh - 170px);
 		background-color: white;
 	}
-	
+
 	@media (prefers-color-scheme: dark) {
 		.column-body {
 			background-color: #1e293b;
@@ -455,7 +451,9 @@
 		gap: 6px;
 		color: #475569;
 		font-size: 14px;
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 		cursor: pointer;
 	}
 
@@ -468,7 +466,7 @@
 		.add-card-btn {
 			color: #94a3b8;
 		}
-		
+
 		.add-card-btn:hover {
 			background-color: rgba(59, 130, 246, 0.2);
 			color: #60a5fa;
@@ -533,7 +531,7 @@
 		.btn-icon {
 			color: #94a3b8;
 		}
-		
+
 		.btn-icon:hover {
 			background-color: rgba(255, 255, 255, 0.1);
 		}

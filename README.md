@@ -91,16 +91,17 @@ Visit http://localhost:5173 (for local dev) or http://localhost:3554 (for Docker
 
 Boardsy uses the following tables:
 
-| Table | Purpose |
-|-------|---------|
-| `boards` | Stores board information (title, description, owner) |
-| `columns` | Contains columns for each board (title, position) |
-| `cards` | Stores card details (title, description, position, due date) |
-| `labels` | Defines labels that can be applied to cards |
-| `card_labels` | Junction table connecting cards to labels |
-| `board_members` | Manages sharing and permissions for boards |
+| Table           | Purpose                                                      |
+| --------------- | ------------------------------------------------------------ |
+| `boards`        | Stores board information (title, description, owner)         |
+| `columns`       | Contains columns for each board (title, position)            |
+| `cards`         | Stores card details (title, description, position, due date) |
+| `labels`        | Defines labels that can be applied to cards                  |
+| `card_labels`   | Junction table connecting cards to labels                    |
+| `board_members` | Manages sharing and permissions for boards                   |
 
 The database setup script automatically:
+
 - Creates all required tables
 - Sets up relationships between tables
 - Adds Row Level Security (RLS) policies for data protection

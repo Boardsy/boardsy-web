@@ -13,22 +13,26 @@
 <div class="welcome-container">
 	<div class="welcome-content">
 		<div class="logo-section">
-			<img src="https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/boardsy-banner.png" alt="Boardsy banner" class="banner" />
+			<img
+				src="https://raw.githubusercontent.com/Boardsy/boardsy-web/refs/heads/main/static/boardsy-banner.png"
+				alt="Boardsy banner"
+				class="banner"
+			/>
 			<p class="tagline">Organize your work. Boost your productivity.</p>
 		</div>
-		
+
 		<div class="auth-options">
 			<div class="auth-option">
 				<h2>Already have an account?</h2>
 				<a href="/login" class="btn btn-primary btn-lg">Log In</a>
 			</div>
-			
+
 			<div class="auth-option">
 				<h2>New to Boardsy?</h2>
 				<a href="/register" class="btn btn-outlined btn-lg">Register</a>
 			</div>
 		</div>
-		
+
 		<div class="footer">
 			<p>&copy; {new Date().getFullYear()} Boardsy. Open source under MIT License.</p>
 		</div>

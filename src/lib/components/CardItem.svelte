@@ -16,19 +16,19 @@
 
 	$: formattedDueDate = card.dueDate ? format(new Date(card.dueDate), 'MMM d, yyyy') : null;
 	$: isOverdue = card.dueDate ? new Date(card.dueDate) < new Date() : false;
-	
+
 	function startEditing() {
 		editedTitle = card.title;
 		editedDescription = card.description || '';
 		isEditing = true;
 		showCardMenu = false;
-		
+
 		setTimeout(() => {
 			const titleInput = document.getElementById(`card-title-${card.id}`);
 			if (titleInput) titleInput.focus();
 		}, 0);
 	}
-	
+
 	async function saveChanges() {
 		if (editedTitle.trim()) {
 			try {
@@ -44,13 +44,13 @@
 			cancelEditing();
 		}
 	}
-	
+
 	function cancelEditing() {
 		editedTitle = card.title;
 		editedDescription = card.description || '';
 		isEditing = false;
 	}
-	
+
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.key === 'Enter' && event.ctrlKey) {
 			event.preventDefault();
@@ -60,12 +60,12 @@
 			cancelEditing();
 		}
 	}
-	
+
 	function confirmDeleteCard() {
 		showCardMenu = false;
 		showDeleteModal = true;
 	}
-	
+
 	async function handleDeleteCard() {
 		try {
 			await deleteCard(card.id, columnId);
@@ -74,18 +74,18 @@
 			console.error('Error deleting card:', error);
 		}
 	}
-	
+
 	function toggleCardMenu(event: MouseEvent) {
 		event.stopPropagation();
 		showCardMenu = !showCardMenu;
-		
+
 		if (showCardMenu) {
 			setTimeout(() => {
 				document.addEventListener('click', handleOutsideClick);
 			}, 0);
 		}
 	}
-	
+
 	function handleOutsideClick(event: MouseEvent) {
 		const target = event.target as HTMLElement;
 		if (!target.closest('.card-menu') && !target.closest('.menu-button')) {
@@ -104,15 +104,15 @@
 {#if isEditing}
 	<!-- Edit Mode -->
 	<div class="card card-edit">
-		<input 
+		<input
 			id="card-title-{card.id}"
-			type="text" 
+			type="text"
 			class="card-edit-title"
 			bind:value={editedTitle}
 			placeholder="Enter card title"
 			on:keydown={handleKeyPress}
 		/>
-		
+
 		<textarea
 			class="card-edit-description"
 			bind:value={editedDescription}
@@ -120,7 +120,7 @@
 			rows="3"
 			on:keydown={handleKeyPress}
 		></textarea>
-		
+
 		<div class="card-edit-actions">
 			<button class="btn primary" on:click={saveChanges}>Save</button>
 			<button class="btn secondary" on:click={cancelEditing}>Cancel</button>
@@ -165,13 +165,13 @@
 				</div>
 			{/if}
 		</div>
-		
+
 		<!-- Card Actions -->
 		<div class="actions">
 			<button class="menu-button" on:click={toggleCardMenu} aria-label="Card menu">
 				<span class="dots">⋮</span>
 			</button>
-			
+
 			{#if showCardMenu}
 				<div class="menu card-menu">
 					<button class="menu-item" on:click|stopPropagation={startEditing}>
@@ -190,12 +190,12 @@
 
 <!-- Delete Confirmation Modal -->
 {#if showDeleteModal}
-	<DeleteConfirmModal 
-		title="Delete Card" 
+	<DeleteConfirmModal
+		title="Delete Card"
 		message="Are you sure you want to delete this card? This action cannot be undone."
 		confirmText="Delete Card"
 		on:confirm={handleDeleteCard}
-		on:cancel={() => showDeleteModal = false}
+		on:cancel={() => (showDeleteModal = false)}
 	/>
 {/if}
 
@@ -208,7 +208,9 @@
 		margin-bottom: 8px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 		position: relative;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition:
+			transform 0.2s,
+			box-shadow 0.2s;
 		cursor: pointer;
 		border: 1px solid rgba(0, 0, 0, 0.04);
 	}
@@ -371,7 +373,7 @@
 		.menu-item:hover {
 			background-color: #374151;
 		}
-		
+
 		.menu-item.delete:hover {
 			background-color: rgba(239, 68, 68, 0.2);
 		}

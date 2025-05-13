@@ -43,31 +43,31 @@
 		showCreateModal = false;
 		goto(`/boards/${event.detail.id}`);
 	}
-	
-	function handleDeleteBoard(event: CustomEvent<{ id: string, title: string }>) {
+
+	function handleDeleteBoard(event: CustomEvent<{ id: string; title: string }>) {
 		boardToDelete = event.detail;
 		showDeleteModal = true;
 	}
-	
+
 	function handleEditBoard(event: CustomEvent<Board>) {
 		boardToEdit = event.detail;
 		showEditModal = true;
 	}
-	
+
 	async function handleBoardUpdated() {
 		showEditModal = false;
-		
+
 		if ($user) {
 			await fetchUserBoards($user.id);
 		}
-		
+
 		boardToEdit = null;
 	}
-	
+
 	async function confirmDeleteBoard() {
 		isDeleting = true;
 		deleteError = '';
-		
+
 		try {
 			await deleteBoard(boardToDelete.id);
 			showDeleteModal = false;
@@ -129,11 +129,7 @@
 				</div>
 			{:else}
 				{#each $boards as board (board.id)}
-					<BoardCard 
-						{board} 
-						on:deleteBoard={handleDeleteBoard}
-						on:editBoard={handleEditBoard}
-					/>
+					<BoardCard {board} on:deleteBoard={handleDeleteBoard} on:editBoard={handleEditBoard} />
 				{/each}
 				<div class="board-card create-board-card" on:click={handleCreateBoard}>
 					<div class="create-board-content">
@@ -151,15 +147,15 @@
 {/if}
 
 {#if showDeleteModal}
-	<BoardDeleteModal 
+	<BoardDeleteModal
 		boardName={boardToDelete.title}
-		on:close={() => showDeleteModal = false}
+		on:close={() => (showDeleteModal = false)}
 		on:confirm={confirmDeleteBoard}
 	/>
 {/if}
 
 {#if showEditModal && boardToEdit}
-	<EditBoardModal 
+	<EditBoardModal
 		board={boardToEdit}
 		on:close={handleCloseModal}
 		on:boardUpdated={handleBoardUpdated}

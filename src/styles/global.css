@@ -162,7 +162,9 @@
 	box-shadow: var(--shadow-sm);
 	border: 1px solid rgba(0, 0, 0, 0.04);
 	cursor: pointer;
-	transition: transform 0.2s, box-shadow 0.2s;
+	transition:
+		transform 0.2s,
+		box-shadow 0.2s;
 }
 
 .task-card:hover {
@@ -384,18 +386,18 @@
 }
 
 /* Force proper contrast for important text elements */
-.theme-light h1, 
-.theme-light h2, 
-.theme-light h3, 
-.theme-light h4, 
-.theme-light h5, 
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
 .theme-light h6 {
 	color: var(--color-text-primary-light) !important;
 }
 
-.theme-light p, 
-.theme-light span, 
-.theme-light label, 
+.theme-light p,
+.theme-light span,
+.theme-light label,
 .theme-light li {
 	color: var(--color-text-secondary-light);
 }

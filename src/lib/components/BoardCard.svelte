@@ -18,7 +18,7 @@
 			event.stopPropagation();
 			return;
 		}
-		
+
 		goto(`/boards/${board.id}`);
 	}
 
@@ -26,7 +26,7 @@
 		event.stopPropagation();
 		dispatch('deleteBoard', { id: board.id, title: board.title });
 	}
-	
+
 	function handleEditClick(event: MouseEvent) {
 		event.stopPropagation();
 		dispatch('editBoard', board);
@@ -52,8 +52,10 @@
 
 	$: backgroundColor = getInitialColors();
 	$: cardStyle = `background-color: ${backgroundColor};`;
-	
-	$: updatedAtDate = new Date(board.updatedAt instanceof Date ? board.updatedAt.getTime() : board.updatedAt);
+
+	$: updatedAtDate = new Date(
+		board.updatedAt instanceof Date ? board.updatedAt.getTime() : board.updatedAt
+	);
 	$: timeAgo = formatDistanceToNow(updatedAtDate, { addSuffix: true });
 </script>
 
@@ -142,12 +144,12 @@
 		font-size: var(--font-size-xs);
 		opacity: 0.8;
 	}
-	
+
 	.board-actions {
 		display: flex;
 		gap: 6px;
 	}
-	
+
 	.board-action-button {
 		background: none;
 		border: none;
@@ -158,12 +160,12 @@
 		border-radius: 4px;
 		transition: all 0.2s;
 	}
-	
+
 	.board-action-button:hover {
 		opacity: 1;
 		background-color: rgba(255, 255, 255, 0.1);
 	}
-	
+
 	.action-icon {
 		font-size: 16px;
 	}

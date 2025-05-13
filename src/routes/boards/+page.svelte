@@ -122,7 +122,7 @@
 						</svg>
 					</div>
 					<h2>No boards yet</h2>
-					<p>Create your first board to get started with FlowLine.</p>
+					<p>Create your first board to get started with Boardsy.</p>
 					<button class="btn btn-primary" on:click={handleCreateBoard}>
 						Create your first board
 					</button>

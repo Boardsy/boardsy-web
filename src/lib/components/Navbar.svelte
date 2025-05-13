@@ -6,7 +6,7 @@
 
 	let isMobileMenuOpen = false;
 	let userMenuOpen = false;
-	let logoSrc = 'https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/flowline-logo.png';
+	let logoSrc = 'https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/boardsy-logo.png';
 	
 	$: isHomePage = $page.url.pathname === '/';
 	$: isAuthPage = $page.url.pathname === '/login' || $page.url.pathname === '/register';
@@ -47,8 +47,8 @@
 		<div class="centered-navbar-container">
 			<div class="centered-logo">
 				<a href="/" class="logo">
-					<img src={logoSrc} alt="FlowLine Logo" width="48" height="48" />
-					<span>FlowLine</span>
+					<img src={logoSrc} alt="Boardsy Logo" width="48" height="48" />
+					<span>Boardsy</span>
 				</a>
 			</div>
 		</div>
@@ -56,8 +56,8 @@
 		<div class="container navbar-container">
 			<div class="navbar-start">
 				<a href="/" class="logo">
-					<img src={logoSrc} alt="FlowLine Logo" width="40" height="40" />
-					<span>FlowLine</span>
+					<img src={logoSrc} alt="Boardsy Logo" width="40" height="40" />
+					<span>Boardsy</span>
 				</a>
 
 				{#if $isAuthenticated}

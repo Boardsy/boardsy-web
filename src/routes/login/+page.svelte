@@ -47,9 +47,9 @@
 	<div class="auth-card">
 		<div class="auth-header">
 			<a href="/" class="home-link">
-				<img src="https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/flowline-banner.png" alt="FlowLine" class="banner" />
+				<img src="https://raw.githubusercontent.com/Balionelis/Flowline/refs/heads/main/static/boardsy-banner.png" alt="Boardsy banner" class="banner" />
 			</a>
-			<h1>Log in to FlowLine</h1>
+			<h1>Log in to Boardsy</h1>
 			<p>Welcome back! Enter your details to continue.</p>
 		</div>
 

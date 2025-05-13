@@ -69,7 +69,7 @@
 	<div class="auth-card">
 		<div class="auth-header">
 			<h1>Create an account</h1>
-			<p>Join FlowLine to organize your work and boost productivity.</p>
+			<p>Join Boardsy to organize your work and boost productivity.</p>
 		</div>
 
 		<form on:submit|preventDefault={handleRegister} class="auth-form">

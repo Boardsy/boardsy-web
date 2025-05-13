@@ -29,5 +29,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/flowline:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/flowline:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/boardsy:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/boardsy:${{ github.sha }}

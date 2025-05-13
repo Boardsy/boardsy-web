@@ -1,4 +1,4 @@
--- FlowLine Database Setup Script
+-- Boardsy Database Setup Script
 -- Run this in your Supabase SQL Editor to create all necessary tables
 
 -- Enable UUID extension

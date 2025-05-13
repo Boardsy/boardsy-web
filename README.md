@@ -1,21 +1,21 @@
-# FlowLine
+# Boardsy
 
-![Docker Build Status](https://github.com/balionelis/flowline/actions/workflows/docker-build.yml/badge.svg)
+![Docker Build Status](https://github.com/balionelis/boardsy/actions/workflows/docker-build.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-FlowLine is a kanban board application designed to help you organize your work with simplicity and clarity. Built with SvelteKit and Supabase, it offers a clean, intuitive interface for task management and team collaboration.
+Boardsy is a kanban board application designed to help you organize your work with simplicity and clarity. Built with SvelteKit and Supabase, it offers a clean, intuitive interface for task management and team collaboration.
 
-![FlowLine Banner](static/flowline-banner.png)
+![Boardsy Banner](static/boardsy-banner.png)
 
 ## Architecture
 
-FlowLine uses a modern web application architecture:
+Boardsy uses a modern web application architecture:
 
 - **Frontend**: SvelteKit for the UI and client-side logic
 - **Backend Services**: Supabase for authentication and data storage
 - **Deployment**: Containerized with Docker for easy hosting
 
-## Actual Features
+## Features
 
 - **Kanban Boards**: Create and organize boards with customizable columns
 - **Card Management**: Create, edit, and move cards between columns using drag-and-drop
@@ -44,33 +44,33 @@ FlowLine uses a modern web application architecture:
 
 ### 2. Set Up the Database
 
-FlowLine requires several tables in your Supabase project. We've made this easy with a setup script:
+Boardsy requires several tables in your Supabase project. We've made this easy with a setup script:
 
 1. In your Supabase dashboard, go to **SQL Editor**
 2. Create a **New Query**
 3. Copy and paste the entire contents of the [database-setup.sql](./database-setup.sql) file
 4. Click **Run** to create all tables and security policies
 
-That's it! Your database is now ready to use with FlowLine.
+That's it! Your database is now ready to use with Boardsy.
 
 ### 3. Run the Application
 
 #### Using Docker:
 
 ```bash
-docker pull blijonas/flowline:latest
+docker pull blijonas/boardsy:latest
 docker run -p 3554:3554 \
   -e PUBLIC_SUPABASE_URL=your_supabase_url \
   -e PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key \
-  blijonas/flowline:latest
+  blijonas/boardsy:latest
 ```
 
 #### Or run locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/balionelis/flowline.git
-cd flowline
+git clone https://github.com/balionelis/boardsy.git
+cd boardsy
 
 # Install dependencies
 npm install
@@ -89,7 +89,7 @@ Visit http://localhost:5173 (for local dev) or http://localhost:3554 (for Docker
 
 ### Database Structure
 
-FlowLine uses the following tables:
+Boardsy uses the following tables:
 
 | Table | Purpose |
 |-------|---------|
